@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "464454579042",
+    "firebase_url": "https://watchstore-98e7c-default-rtdb.firebaseio.com",
+    "project_id": "watchstore-98e7c",
+    "storage_bucket": "watchstore-98e7c.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:464454579042:android:6520a1a663fce97d2e723b",
+        "android_client_info": {
+          "package_name": "com.example.watchstore"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDo2uu3hJkRyCcLvwYp1sO09LAuWzVjc8o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

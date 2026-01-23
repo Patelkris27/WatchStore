@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="#FFFFFF">
+
+    <TextView
+        android:id="@+id/tvTitle"
+        android:text="Add Product"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/theme"
+        android:layout_marginTop="70dp"/>
+
+    <EditText
+        android:id="@+id/etProductName"
+        android:hint="Product name"
+        android:layout_below="@id/tvTitle"
+        android:layout_marginTop="24dp"
+        android:textColor="@color/theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <EditText
+        android:id="@+id/etPrice"
+        android:hint="Price"
+        android:inputType="number"
+        android:layout_below="@id/etProductName"
+        android:textColor="@color/theme"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+    <EditText
+        android:id="@+id/etStock"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Stock Quantity"
+        android:inputType="number"
+        android:layout_below="@+id/etPrice"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/theme"/>
+
+
+    <EditText
+        android:id="@+id/etImageUrl"
+        android:hint="Image URL"
+        android:layout_below="@id/etStock"
+        android:textColor="@color/theme"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Spinner
+        android:id="@+id/spBrand"
+        android:layout_below="@id/etImageUrl"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:textColor="@color/theme"
+        android:layout_height="wrap_content"/>
+
+    <Spinner
+        android:id="@+id/spCategory"
+        android:layout_below="@id/spBrand"
+        android:layout_marginTop="16dp"
+        android:textColor="@color/theme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Button
+        android:id="@+id/btnSaveProduct"
+        android:text="Save Product"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/theme"
+        android:layout_below="@id/spCategory"
+        android:layout_marginTop="24dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+</RelativeLayout>
