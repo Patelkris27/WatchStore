@@ -12,13 +12,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import androidx.appcompat.app.AlertDialog
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
-import java.text.SimpleDateFormat
-import java.util.Date
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -40,8 +33,6 @@ class MainActivity : AppCompatActivity() {
         tvForgotPassword.setOnClickListener {
             showForgotPasswordDialog()
         }
-
-
         btnLogin.setOnClickListener {
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
@@ -50,7 +41,6 @@ class MainActivity : AppCompatActivity() {
                 Toast.makeText(this, "Enter email & password", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
-
             auth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
                     val user = auth.currentUser
@@ -66,7 +56,6 @@ class MainActivity : AppCompatActivity() {
                     Toast.makeText(this, "You are not registered!", Toast.LENGTH_SHORT).show()
                 }
         }
-
         btnGoToRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
