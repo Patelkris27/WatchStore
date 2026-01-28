@@ -12,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import androidx.appcompat.app.AlertDialog
+import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
 
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
             showForgotPasswordDialog()
         }
         btnLogin.setOnClickListener {
+
             val email = etEmail.text.toString().trim()
             val password = etPassword.text.toString().trim()
 
@@ -43,19 +45,48 @@ class MainActivity : AppCompatActivity() {
             }
             auth.signInWithEmailAndPassword(email, password)
                 .addOnSuccessListener {
-                    val user = auth.currentUser
-                    if (user != null && user.isEmailVerified) {
-                        startActivity(Intent(this, AdminHomeActivity::class.java))
-                        finish()
-                    } else {
+                    val user = auth.currentUser ?: return@addOnSuccessListener
+                    if (!user.isEmailVerified) {
                         auth.signOut()
-                        Toast.makeText(this, "Verify your email before login", Toast.LENGTH_LONG).show()
+                        Toast.makeText(
+                            this,
+                            "Verify your email before login",
+                            Toast.LENGTH_LONG
+                        ).show()
+                        return@addOnSuccessListener
                     }
+                    val uid = user.uid
+                    FirebaseDatabase.getInstance().reference
+                        .child("users")
+                        .child(uid)
+                        .child("role")
+                        .get()
+                        .addOnSuccessListener { snapshot ->
+                            when (snapshot.value.toString()) {
+                                "admin" -> {
+                                    startActivity(Intent(this, AdminHomeActivity::class.java))
+                                    finish()
+                                }
+                                "user" -> {
+                                    startActivity(Intent(this, UserHomeActivity::class.java))
+                                    finish()
+                                }
+                                else -> {
+                                    auth.signOut()
+                                    Toast.makeText(this, "Role not assigned. Contact admin.", Toast.LENGTH_LONG).show()
+                                }
+                            }
+                        }
                 }
                 .addOnFailureListener {
-                    Toast.makeText(this, "You are not registered!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(
+                        this,
+                        "Invalid email or password",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
         }
+
         btnGoToRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
