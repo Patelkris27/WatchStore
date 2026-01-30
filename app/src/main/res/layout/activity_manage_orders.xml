@@ -1,26 +1,48 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF">
+    android:background="@android:color/white">
 
-    <TextView
-        android:id="@+id/tvTitle"
-        android:layout_width="wrap_content"
+    <!-- Charts container -->
+    <LinearLayout
+        android:id="@+id/layoutCharts"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Manage Orders"
-        android:textSize="22sp"
-        android:textStyle="bold"
-        android:layout_centerHorizontal="true"
-        android:textColor="@color/theme"
+        android:orientation="vertical"
         android:layout_marginTop="70dp"
-        android:layout_marginStart="16dp"/>
+        android:padding="16dp">
 
+        <com.github.mikephil.charting.charts.BarChart
+            android:id="@+id/chartOrders"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"/>
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chartRevenue"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="16dp"/>
+
+    </LinearLayout>
+
+    <!-- Orders list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvOrders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tvTitle"
-        android:padding="16dp"/>
+        android:layout_below="@id/layoutCharts"
+        android:layout_above="@id/btnExport"
+        android:padding="8dp"/>
+
+    <!-- Export button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnExport"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Export Orders Report"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/theme"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="16dp"/>
 
 </RelativeLayout>

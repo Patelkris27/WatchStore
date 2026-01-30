@@ -1,0 +1,69 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@drawable/bg_dashboard_card"
+    android:padding="12dp"
+    android:layout_margin="8dp">
+<LinearLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+    <TextView
+        android:id="@+id/tvName"
+        android:textStyle="bold"
+        android:textColor="@color/theme"
+        android:textSize="20sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <Button
+            android:id="@+id/btnMinus"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:textSize="25dp"
+            android:backgroundTint="@color/theme"
+            android:text="−"/>
+
+        <TextView
+            android:id="@+id/tvQty"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:gravity="center"
+            android:textSize="25sp"
+            android:textStyle="bold"/>
+
+        <Button
+            android:id="@+id/btnPlus"
+            android:layout_width="80dp"
+            android:layout_height="50dp"
+            android:textSize="25dp"
+            android:backgroundTint="@color/theme"
+            android:text="+"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/tvPrice"
+        android:textStyle="bold"
+        android:layout_marginTop="6dp"
+        android:textSize="15dp"
+        android:text="Price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
+</LinearLayout>
+        <ImageView
+        android:id="@+id/imgProduct"
+        android:padding="15dp"
+        android:layout_width="110dp"
+        android:layout_height="110dp"
+        android:layout_marginLeft="20dp"
+        android:scaleType="centerCrop"/>
+</LinearLayout>

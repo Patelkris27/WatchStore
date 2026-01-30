@@ -7,16 +7,20 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 class OrderAdapter(
-    private val list: List<Order>,
-    private val db: DatabaseReference
+    private val list: List<Order>
 ) : RecyclerView.Adapter<OrderAdapter.ViewHolder>() {
+
+    private val db = FirebaseDatabase.getInstance().reference
+
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val tvOrderId: TextView = v.findViewById(R.id.tvOrderId)
         val tvTotal: TextView = v.findViewById(R.id.tvTotal)
         val tvStatus: TextView = v.findViewById(R.id.tvStatus)
+        val tvName : TextView = v.findViewById(R.id.tvName)
         val btnUpdate: Button = v.findViewById(R.id.btnUpdateStatus)
     }
 
@@ -31,6 +35,7 @@ class OrderAdapter(
         val order = list[position]
 
         holder.tvOrderId.text = "Order ID: ${order.id}"
+        holder.tvName.text = "UserName: ${order.user}"
         holder.tvTotal.text = "Total: ₹${order.total}"
         holder.tvStatus.text = "Status: ${order.status}"
 

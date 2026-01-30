@@ -1,13 +1,79 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Coming Soooooon"
-        android:layout_centerInParent="true"
-        android:textSize="45dp"/>
+        android:layout_marginTop="70dp"
+        android:id="@+id/tvTitle"
+        android:padding="10dp">
+
+        <TextView
+            android:id="@+id/Title"
+            android:text="The Heis Watches"
+            android:textSize="25sp"
+            android:textStyle="bold"
+            android:textColor="@color/theme"
+            android:fontFamily="sans-serif-condensed-medium"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <ImageView
+            android:id="@+id/btnCart"
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:src="@drawable/ic_cart"
+            app:tint="@color/theme"
+            android:layout_alignParentEnd="true"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/layoutFilters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvTitle"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvBrands"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:orientation="horizontal"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvCategories"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:orientation="horizontal"/>
+    </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvUserProducts"
+        android:layout_below="@id/layoutFilters"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="12dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnMyOrders"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="My Orders"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_below="@id/rvUserProducts"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@color/theme"
+        android:layout_gravity="center_horizontal"/>
+
 
 </RelativeLayout>

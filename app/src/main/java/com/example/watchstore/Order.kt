@@ -1,8 +1,11 @@
 package com.example.watchstore
 
 data class Order(
-    val id: String,
-    val userId: String,
-    val total: String,
-    val status: String
+    val id: String = "",
+    val user: String = "",
+    val productId: String = "",
+    val quantity: Int = 0,
+    val total: Int = 0,
+    val date: String = "",
+    val status: String = "Pending"
 )
