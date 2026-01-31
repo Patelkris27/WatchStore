@@ -1,5 +1,6 @@
 package com.example.watchstore
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,9 +43,16 @@ class CartAdapter(
         holder.tvQty.text = c.quantity.toString()
         holder.tvPrice.text = "₹${c.quantity * c.price}"
 
-        Glide.with(holder.itemView.context)
-            .load(c.imageUrl)
+      FirebaseDatabase.getInstance().reference
+    .child("products")
+    .child(c.productId)
+    .get()
+    .addOnSuccessListener {
+        val imageUrl = it.child("imageUrl").value.toString()
+        Glide.with(holder.itemView)
+            .load(imageUrl)
             .into(holder.img)
+    }
 
         FirebaseDatabase.getInstance().reference
             .child("products").child(c.productId)

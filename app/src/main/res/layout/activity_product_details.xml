@@ -24,8 +24,9 @@
         <ImageView
             android:id="@+id/imgProduct"
             android:padding="15dp"
-            android:layout_width="match_parent"
-            android:layout_height="380dp"
+            android:layout_width="300dp"
+            android:layout_height="350dp"
+            android:layout_gravity="center"
             android:layout_marginTop="15dp"
             android:scaleType="centerCrop"/>
 
@@ -82,11 +83,11 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="16dp">
+            android:layout_marginTop="15dp">
 
             <Button
                 android:id="@+id/btnMinus"
-                android:layout_width="80dp"
+                android:layout_width="60dp"
                 android:layout_height="50dp"
                 android:textSize="25dp"
                 android:backgroundTint="@color/theme"
@@ -97,13 +98,11 @@
                 android:layout_width="50dp"
                 android:layout_height="50dp"
                 android:gravity="center"
-                android:text="1"
-                android:textSize="18sp"
-                android:textStyle="bold"/>
+                android:textSize="20sp" />
 
             <Button
                 android:id="@+id/btnPlus"
-                android:layout_width="80dp"
+                android:layout_width="60dp"
                 android:layout_height="50dp"
                 android:textSize="25dp"
                 android:backgroundTint="@color/theme"
