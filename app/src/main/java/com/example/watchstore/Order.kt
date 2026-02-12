@@ -7,5 +7,9 @@ data class Order(
     val quantity: Int = 0,
     val total: Int = 0,
     val date: String = "",
-    val status: String = "Pending"
+    val status: String = "Pending",
+    val paymentMethod: String = "",
+    val address: String = "",
+    val name: String = "",
+    val phone: String = ""
 )

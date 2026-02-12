@@ -21,8 +21,6 @@ class ProductAdapter(
         val tvMeta: TextView = v.findViewById(R.id.tvMeta)
         val tvPrice: TextView = v.findViewById(R.id.tvPrice)
         val tvLowStock: TextView = v.findViewById(R.id.tvLowStock)
-        val btnEdit: Button = v.findViewById(R.id.btnEdit)
-        val btnDelete: Button = v.findViewById(R.id.btnDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -49,18 +47,27 @@ class ProductAdapter(
         holder.tvLowStock.visibility =
             if (p.stock <= 5) View.VISIBLE else View.GONE
 
-        holder.btnEdit.setOnClickListener {
-            openEditDialog(holder.itemView.context, p)
-        }
-
-        holder.btnDelete.setOnClickListener {
-            DialogUtil.showDeleteDialog(
-                holder.itemView.context,
-                "Delete Product",
-                "This product will be deleted"
-            ) {
-                rootDb.child("products").child(p.id).removeValue()
+        holder.itemView.setOnLongClickListener {
+            val popup = PopupMenu(holder.itemView.context, it)
+            popup.menu.add("Edit")
+            popup.menu.add("Delete")
+            popup.setOnMenuItemClickListener { item ->
+                when (item.title) {
+                    "Edit" -> openEditDialog(holder.itemView.context, p)
+                    "Delete" -> {
+                        DialogUtil.showDeleteDialog(
+                            holder.itemView.context,
+                            "Delete Product",
+                            "This product will be deleted"
+                        ) {
+                            rootDb.child("products").child(p.id).removeValue()
+                        }
+                    }
+                }
+                true
             }
+            popup.show()
+            true
         }
     }
 

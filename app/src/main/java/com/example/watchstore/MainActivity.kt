@@ -151,5 +151,16 @@ class MainActivity : AppCompatActivity() {
         dialog.show()
     }
 
+    override fun onBackPressed() {
+        AlertDialog.Builder(this)
+            .setTitle("Exit App")
+            .setMessage("Are you sure you want to exit?")
+            .setPositiveButton("Yes") { _, _ ->
+                finishAffinity()
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
 
 }

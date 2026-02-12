@@ -54,9 +54,24 @@
             android:orientation="horizontal"/>
     </LinearLayout>
 
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerBanner"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_below="@id/layoutFilters"
+        android:layout_marginTop="8dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"/>
+
+    <me.relex.circleindicator.CircleIndicator3
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_below="@id/viewPagerBanner"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvUserProducts"
-        android:layout_below="@id/layoutFilters"
+        android:layout_below="@id/indicator"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="12dp"/>
@@ -74,6 +89,5 @@
         android:textColor="@android:color/white"
         android:backgroundTint="@color/theme"
         android:layout_gravity="center_horizontal"/>
-
 
 </RelativeLayout>

@@ -17,18 +17,24 @@
         android:id="@+id/btnGpay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Google Pay"/>
+        android:text="Google Pay"
+        android:backgroundTint="@color/theme"
+        android:textColor="@android:color/white"/>
 
     <Button
         android:id="@+id/btnCreditCard"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Credit Card"/>
+        android:text="Credit Card"
+        android:backgroundTint="@color/theme"
+        android:textColor="@android:color/white"/>
 
     <Button
         android:id="@+id/btnWallet"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Wallet"/>
+        android:text=" Other Wallet"
+        android:backgroundTint="@color/theme"
+        android:textColor="@android:color/white"/>
 
 </LinearLayout>

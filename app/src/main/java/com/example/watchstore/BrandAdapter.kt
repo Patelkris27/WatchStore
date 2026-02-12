@@ -4,7 +4,9 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.EditText
+import android.widget.PopupMenu
+import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.example.watchstore.utils.DialogUtil
@@ -18,8 +20,6 @@ class BrandAdapter(
 
     class VH(v: View) : RecyclerView.ViewHolder(v) {
         val tvName: TextView = v.findViewById(R.id.tvBrand)
-        val btnEdit: Button = v.findViewById(R.id.btnEdit)
-        val btnDelete: Button = v.findViewById(R.id.btnDelete)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -31,18 +31,27 @@ class BrandAdapter(
         val brand = list[position]
         holder.tvName.text = brand.name
 
-        holder.btnEdit.setOnClickListener {
-            showEditDialog(holder.itemView.context, brand)
-        }
-
-        holder.btnDelete.setOnClickListener {
-            DialogUtil.showDeleteDialog(
-                holder.itemView.context,
-                "Delete Brand",
-                "This will remove the brand permanently"
-            ) {
-                db.child(brand.id).removeValue()
+        holder.itemView.setOnLongClickListener {
+            val popup = PopupMenu(holder.itemView.context, it)
+            popup.menu.add("Edit")
+            popup.menu.add("Delete")
+            popup.setOnMenuItemClickListener { item ->
+                when (item.title) {
+                    "Edit" -> showEditDialog(holder.itemView.context, brand)
+                    "Delete" -> {
+                        DialogUtil.showDeleteDialog(
+                            holder.itemView.context,
+                            "Delete Brand",
+                            "This will remove the brand permanently"
+                        ) {
+                            db.child(brand.id).removeValue()
+                        }
+                    }
+                }
+                true
             }
+            popup.show()
+            true
         }
     }
 

@@ -4,19 +4,24 @@ import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.watchstore.utils.DialogUtil
 import com.google.firebase.database.FirebaseDatabase
 
 class UserOrderAdapter(
     private val list: List<Order>
 ) : RecyclerView.Adapter<UserOrderAdapter.VH>() {
 
+    private val db = FirebaseDatabase.getInstance().reference.child("orders")
+
     class VH(v: View) : RecyclerView.ViewHolder(v) {
         val tvProduct: TextView = v.findViewById(R.id.tvProduct)
         val tvQty: TextView = v.findViewById(R.id.tvQty)
         val tvTotal: TextView = v.findViewById(R.id.tvTotal)
         val tvStatus: TextView = v.findViewById(R.id.tvStatus)
+        val btnCancel: Button = v.findViewById(R.id.btnCancel)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -40,6 +45,22 @@ class UserOrderAdapter(
                 else -> Color.parseColor("#FFA000")
             }
         )
+
+        if (o.status == "Delivered" || o.status == "Cancelled") {
+            holder.btnCancel.visibility = View.GONE
+        } else {
+            holder.btnCancel.visibility = View.VISIBLE
+        }
+
+        holder.btnCancel.setOnClickListener {
+            DialogUtil.showDeleteDialog(
+                holder.itemView.context,
+                "Cancel Order",
+                "Are you sure you want to cancel this order?"
+            ) {
+                db.child(o.id).child("status").setValue("Cancelled")
+            }
+        }
 
         FirebaseDatabase.getInstance().reference
             .child("products").child(o.productId)

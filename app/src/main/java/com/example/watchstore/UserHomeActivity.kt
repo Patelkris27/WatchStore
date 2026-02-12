@@ -2,14 +2,18 @@ package com.example.watchstore
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.viewpager2.widget.ViewPager2
 import com.google.firebase.database.*
+import me.relex.circleindicator.CircleIndicator3
+import java.util.*
 
 class UserHomeActivity : AppCompatActivity() {
 
@@ -19,11 +23,35 @@ class UserHomeActivity : AppCompatActivity() {
     private var selectedBrand: String? = null
     private var selectedCategory: String? = null
 
+    // Banner
+    private lateinit var viewPager: ViewPager2
+    private lateinit var indicator: CircleIndicator3
+    private lateinit var bannerAdapter: BannerAdapter
+    private val bannerImages = listOf(
+        R.drawable.banner1, // Replace with your banner images
+        R.drawable.banner2,
+        R.drawable.banner3
+    )
+    private val handler = Handler(Looper.getMainLooper())
+    private var currentPage = 0
+    private var timer: Timer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_home_user)
+
+        // Banner setup
+        viewPager = findViewById(R.id.viewPagerBanner)
+        indicator = findViewById(R.id.indicator)
+
+        bannerAdapter = BannerAdapter(bannerImages)
+        viewPager.adapter = bannerAdapter
+        indicator.setViewPager(viewPager)
+
+        // Auto scroll
+        createSlideShow()
+
 
         rvProducts = findViewById(R.id.rvUserProducts)
         rvProducts.layoutManager = GridLayoutManager(this, 2)
@@ -68,7 +96,6 @@ class UserHomeActivity : AppCompatActivity() {
                 }
 
                 rvProducts.adapter = UserProductAdapter(list)
-//                Toast.makeText(this@UserHomeActivity, "Loaded ${items.size} $node", Toast.LENGTH_SHORT).show()
 
             }
 
@@ -82,6 +109,23 @@ class UserHomeActivity : AppCompatActivity() {
         }
 
     }
+
+    private fun createSlideShow() {
+        val runnable = Runnable {
+            if (currentPage == bannerImages.size) {
+                currentPage = 0
+            }
+            viewPager.setCurrentItem(currentPage++, true)
+        }
+
+        timer = Timer()
+        timer?.schedule(object : TimerTask() {
+            override fun run() {
+                handler.post(runnable)
+            }
+        }, 3000, 3000)
+    }
+
     private fun loadFilters(
         node: String,
         rv: RecyclerView,
@@ -121,6 +165,11 @@ class UserHomeActivity : AppCompatActivity() {
                     (selectedCategory == null || it.categoryId == selectedCategory)
         }
         rvProducts.adapter = UserProductAdapter(filtered)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        timer?.cancel()
     }
 
 }
