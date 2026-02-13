@@ -3,44 +3,37 @@ package com.example.watchstore
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ProgressBar
-import android.widget.TextView
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import androidx.appcompat.app.AlertDialog
+import com.example.watchstore.databinding.ActivityMainBinding
+import com.example.watchstore.databinding.DialogForgotPasswordBinding
+import com.example.watchstore.databinding.DialogSuccessBinding
 import com.google.firebase.database.FirebaseDatabase
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityMainBinding
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_main)
-
-        val btnLogin = findViewById<Button>(R.id.btnLogin)
-        val btnGoToRegister = findViewById<Button>(R.id.btnGoToRegister)
-        val etEmail = findViewById<EditText>(R.id.etEmail)
-        val etPassword = findViewById<EditText>(R.id.etPassword)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
-        val tvForgotPassword = findViewById<TextView>(R.id.tvForgotPassword)
 
-        tvForgotPassword.setOnClickListener {
+        binding.tvForgotPassword.setOnClickListener {
             showForgotPasswordDialog()
         }
-        btnLogin.setOnClickListener {
 
-            val email = etEmail.text.toString().trim()
-            val password = etPassword.text.toString().trim()
+        binding.btnLogin.setOnClickListener {
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Enter email & password", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.enter_email_and_password), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             auth.signInWithEmailAndPassword(email, password)
@@ -50,7 +43,7 @@ class MainActivity : AppCompatActivity() {
                         auth.signOut()
                         Toast.makeText(
                             this,
-                            "Verify your email before login",
+                            getString(R.string.verify_email_before_login),
                             Toast.LENGTH_LONG
                         ).show()
                         return@addOnSuccessListener
@@ -73,7 +66,7 @@ class MainActivity : AppCompatActivity() {
                                 }
                                 else -> {
                                     auth.signOut()
-                                    Toast.makeText(this, "Role not assigned. Contact admin.", Toast.LENGTH_LONG).show()
+                                    Toast.makeText(this, getString(R.string.role_not_assigned), Toast.LENGTH_LONG).show()
                                 }
                             }
                         }
@@ -81,42 +74,37 @@ class MainActivity : AppCompatActivity() {
                 .addOnFailureListener {
                     Toast.makeText(
                         this,
-                        "Invalid email or password",
+                        getString(R.string.invalid_email_or_password),
                         Toast.LENGTH_SHORT
                     ).show()
                 }
         }
 
-        btnGoToRegister.setOnClickListener {
+        binding.btnGoToRegister.setOnClickListener {
             startActivity(Intent(this, RegisterActivity::class.java))
         }
     }
+
     private fun showForgotPasswordDialog() {
-        val view = layoutInflater.inflate(R.layout.dialog_forgot_password, null)
-
-        val etEmail = view.findViewById<EditText>(R.id.etEmail)
-        val btnSend = view.findViewById<Button>(R.id.btnSend)
-        val btnCancel = view.findViewById<Button>(R.id.btnCancel)
-        val progress = view.findViewById<ProgressBar>(R.id.progressSend)
-
+        val dialogBinding = DialogForgotPasswordBinding.inflate(layoutInflater)
         val dialog = AlertDialog.Builder(this)
-            .setView(view)
+            .setView(dialogBinding.root)
             .setCancelable(false)
             .create()
 
-        btnCancel.setOnClickListener {
+        dialogBinding.btnCancel.setOnClickListener {
             dialog.dismiss()
         }
 
-        btnSend.setOnClickListener {
-            val email = etEmail.text.toString().trim()
+        dialogBinding.btnSend.setOnClickListener {
+            val email = dialogBinding.etEmail.text.toString().trim()
             if (email.isEmpty()) {
-                Toast.makeText(this, "Enter email", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.enter_email), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
-            btnSend.isEnabled = false
-            progress.visibility = View.VISIBLE
+            dialogBinding.btnSend.isEnabled = false
+            dialogBinding.progressSend.visibility = View.VISIBLE
 
             FirebaseAuth.getInstance()
                 .sendPasswordResetEmail(email)
@@ -125,26 +113,25 @@ class MainActivity : AppCompatActivity() {
                     showSuccessDialog()
                 }
                 .addOnFailureListener {
-                    btnSend.isEnabled = true
-                    progress.visibility = View.GONE
-                    Toast.makeText(this, "Failed to send email", Toast.LENGTH_SHORT).show()
+                    dialogBinding.btnSend.isEnabled = true
+                    dialogBinding.progressSend.visibility = View.GONE
+                    Toast.makeText(this, getString(R.string.failed_to_send_email), Toast.LENGTH_SHORT).show()
                 }
         }
 
         dialog.show()
     }
-    private fun showSuccessDialog() {
-        val view = layoutInflater.inflate(R.layout.dialog_success, null)
-        val btnOk = view.findViewById<Button>(R.id.btnOk)
 
+    private fun showSuccessDialog() {
+        val dialogBinding = DialogSuccessBinding.inflate(layoutInflater)
         val dialog = AlertDialog.Builder(this)
-            .setView(view)
+            .setView(dialogBinding.root)
             .create()
 
         dialog.window?.attributes?.windowAnimations =
             android.R.style.Animation_Dialog
 
-        btnOk.setOnClickListener {
+        dialogBinding.btnOk.setOnClickListener {
             dialog.dismiss()
         }
 
@@ -153,14 +140,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onBackPressed() {
         AlertDialog.Builder(this)
-            .setTitle("Exit App")
-            .setMessage("Are you sure you want to exit?")
-            .setPositiveButton("Yes") { _, _ ->
+            .setTitle(getString(R.string.exit_app))
+            .setMessage(getString(R.string.exit_app_message))
+            .setPositiveButton(getString(R.string.yes)) { _, _ ->
                 finishAffinity()
             }
-            .setNegativeButton("No", null)
+            .setNegativeButton(getString(R.string.no), null)
             .show()
     }
-
-
 }

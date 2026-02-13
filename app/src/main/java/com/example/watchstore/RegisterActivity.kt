@@ -2,11 +2,9 @@ package com.example.watchstore
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import com.example.watchstore.databinding.ActivityRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
@@ -14,30 +12,25 @@ import com.google.firebase.database.FirebaseDatabase
 
 class RegisterActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityRegisterBinding
     private lateinit var auth: FirebaseAuth
     private lateinit var database: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_register)
-
-        val btnRegister = findViewById<Button>(R.id.btnRegister)
-        val btnGoToLogin = findViewById<Button>(R.id.btnGoToLogin)
-        val etName = findViewById<EditText>(R.id.etName)
-        val etEmail = findViewById<EditText>(R.id.etEmail)
-        val etPassword = findViewById<EditText>(R.id.etPassword)
+        binding = ActivityRegisterBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance().reference
 
-        btnRegister.setOnClickListener {
-            val name = etName.text.toString().trim()
-            val email = etEmail.text.toString().trim()
-            val password = etPassword.text.toString().trim()
+        binding.btnRegister.setOnClickListener {
+            val name = binding.etName.text.toString().trim()
+            val email = binding.etEmail.text.toString().trim()
+            val password = binding.etPassword.text.toString().trim()
 
             if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
 
@@ -58,7 +51,7 @@ class RegisterActivity : AppCompatActivity() {
 
                     Toast.makeText(
                         this,
-                        "Verification email sent. Verify before login.",
+                        getString(R.string.verification_email_sent),
                         Toast.LENGTH_LONG
                     ).show()
 
@@ -71,7 +64,7 @@ class RegisterActivity : AppCompatActivity() {
                 }
         }
 
-        btnGoToLogin.setOnClickListener {
+        binding.btnGoToLogin.setOnClickListener {
             finish()
         }
     }

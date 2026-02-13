@@ -4,50 +4,48 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@color/white"
     tools:context=".MainActivity">
 
-    <!-- App Logo -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:id="@+id/logo"
         android:layout_marginTop="100dp"
         android:src="@drawable/logob"
+        android:contentDescription="@string/logo_description"
         android:layout_centerHorizontal="true"/>
 
     <TextView
         android:id="@+id/tvLogo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="The Heis"
+        android:text="@string/app_subtitle"
         android:textSize="30sp"
         android:fontFamily="sans-serif-condensed-medium"
         android:layout_below="@+id/logo"
         android:textStyle="bold"
-        android:textColor="#1E88E5"
+        android:textColor="@color/theme"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp" />
-    <!-- Welcome Text -->
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Sign in to explore watches"
+        android:text="@string/sign_in_title"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:textColor="#222222"
+        android:textColor="@color/text_color_primary"
         android:layout_below="@id/tvLogo"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="24dp" />
 
-    <!-- Email -->
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/tilEmail"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Email"
+        android:hint="@string/email_hint"
         android:layout_below="@id/tvTitle"
         app:boxStrokeColor="@color/theme"
         android:textColorHint="@color/theme"
@@ -69,7 +67,7 @@
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Password"
+        android:hint="@string/password_hint"
         app:endIconMode="password_toggle"
         app:endIconTint="@color/theme"
         app:boxStrokeColor="@color/theme"
@@ -88,12 +86,11 @@
             android:inputType="textPassword" />
     </com.google.android.material.textfield.TextInputLayout>
 
-    <!-- Login Button -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:text="Login"
+        android:text="@string/login_button"
         android:textSize="20sp"
         android:textStyle="bold"
         android:textColor="@android:color/white"
@@ -104,19 +101,17 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp" />
 
-    <!-- Forgot Password -->
     <TextView
         android:id="@+id/tvForgotPassword"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Forgot password?"
+        android:text="@string/forgot_password"
         android:textSize="14sp"
-        android:textColor="#777777"
+        android:textColor="@color/text_color_secondary"
         android:layout_below="@id/btnLogin"
         android:layout_alignStart="@id/btnLogin"
         android:layout_marginTop="12dp"/>
 
-    <!-- Bottom Section -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -128,7 +123,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New to The Heis Watches?"
+            android:text="@string/new_user_prompt"
             android:textSize="16sp" />
         <Space
             android:layout_width="0dp"
@@ -139,13 +134,13 @@
             android:id="@+id/btnGoToRegister"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
-            android:text="Sign up"
+            android:text="@string/sign_up_button"
             android:textSize="14sp"
-            android:textColor="#1E88E5"
+            android:textColor="@color/theme"
             app:cornerRadius="18dp"
             app:strokeWidth="1dp"
-            app:strokeColor="#1E88E5"
-            android:backgroundTint="#FFFFFF" />
+            app:strokeColor="@color/theme"
+            android:backgroundTint="@color/white" />
 
     </LinearLayout>
 

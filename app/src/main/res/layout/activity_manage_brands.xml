@@ -8,7 +8,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Manage Brands"
+        android:text="@string/manage_brands_title"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
@@ -20,15 +20,15 @@
         android:id="@+id/rvBrands"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tvTitle"
-        android:layout_above="@id/btnAddBrand"
+        android:layout_below="@+id/tvTitle"
+        android:layout_above="@+id/btnAddBrand"
         android:padding="10dp"/>
 
     <Button
         android:id="@+id/btnAddBrand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Brand"
+        android:text="@string/add_brand_button"
         android:textColor="@color/white"
         android:backgroundTint="@color/theme"
         android:layout_alignParentBottom="true"

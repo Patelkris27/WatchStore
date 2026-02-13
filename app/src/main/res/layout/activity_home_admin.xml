@@ -19,7 +19,8 @@
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:src="@drawable/ic_admin"
-            android:scaleType="centerCrop"/>
+            android:scaleType="centerCrop"
+            android:contentDescription="@string/admin_profile_image_description"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -29,7 +30,7 @@
 
             <TextView
                 android:id="@+id/tvAdminName"
-                android:text="Admin"
+                android:text="@string/admin_name"
                 android:textSize="25sp"
                 android:textStyle="bold"
                 android:textColor="@color/theme"
@@ -38,7 +39,7 @@
 
             <TextView
                 android:id="@+id/tvAdminEmail"
-                android:text="admin@theheiswatches.com"
+                android:text="@string/admin_email"
                 android:textSize="20sp"
                 android:textColor="@color/theme"
                 android:layout_width="wrap_content"
@@ -63,7 +64,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Users: 0"
+                android:text="@string/total_users_format"
                 android:textColor="@color/theme"/>
 
             <TextView
@@ -71,7 +72,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Orders: 0"
+                android:text="@string/total_orders_format"
                 android:textColor="@color/theme"/>
         </LinearLayout>
 
@@ -86,7 +87,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Revenue: ₹0"
+                android:text="@string/total_revenue_format"
                 android:textColor="@color/theme"/>
 
             <TextView
@@ -94,7 +95,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Today: 0"
+                android:text="@string/today_orders_format"
                 android:textColor="@color/theme"/>
         </LinearLayout>
     </LinearLayout>

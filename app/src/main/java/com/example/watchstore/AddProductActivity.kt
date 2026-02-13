@@ -1,71 +1,108 @@
 package com.example.watchstore
 
 import android.os.Bundle
-import android.widget.*
-import androidx.activity.enableEdgeToEdge
+import android.widget.ArrayAdapter
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.google.firebase.database.*
+import com.example.watchstore.databinding.ActivityAddProductBinding
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 
 class AddProductActivity : AppCompatActivity() {
 
-    private lateinit var brandMap: HashMap<String, String>
-    private lateinit var categoryMap: HashMap<String, String>
+    private lateinit var binding: ActivityAddProductBinding
+    private lateinit var db: DatabaseReference
+    private val brandMap = HashMap<String, String>()
+    private val categoryMap = HashMap<String, String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_add_product)
+        binding = ActivityAddProductBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val etName = findViewById<EditText>(R.id.etProductName)
-        val etPrice = findViewById<EditText>(R.id.etPrice)
-        val etImage = findViewById<EditText>(R.id.etImageUrl)
-        val etStock = findViewById<EditText>(R.id.etStock)
-        val spBrand = findViewById<Spinner>(R.id.spBrand)
-        val spCategory = findViewById<Spinner>(R.id.spCategory)
-        val btnSave = findViewById<Button>(R.id.btnSaveProduct)
+        db = FirebaseDatabase.getInstance().reference
 
-        val db = FirebaseDatabase.getInstance().reference
-        brandMap = HashMap()
-        categoryMap = HashMap()
+        loadSpinners()
+        setupClickListeners()
+    }
 
-        loadSpinner(db.child("brands"), spBrand, brandMap)
-        loadSpinner(db.child("categories"), spCategory, categoryMap)
+    private fun loadSpinners() {
+        loadSpinnerData(db.child("brands"), binding.spBrand, brandMap)
+        loadSpinnerData(db.child("categories"), binding.spCategory, categoryMap)
+    }
 
-        btnSave.setOnClickListener {
-
-            if (etName.text.isEmpty() || etPrice.text.isEmpty()
-                || etImage.text.isEmpty() || etStock.text.isEmpty()
-            ) {
-                Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
+    private fun loadSpinnerData(
+        ref: DatabaseReference,
+        spinner: Spinner,
+        map: HashMap<String, String>
+    ) {
+        ref.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val list = ArrayList<String>()
+                for (s in snapshot.children) {
+                    val name = s.value.toString()
+                    s.key?.let {
+                        map[name] = it
+                        list.add(name)
+                    }
+                }
+                spinner.adapter =
+                    ArrayAdapter(this@AddProductActivity, android.R.layout.simple_spinner_dropdown_item, list)
             }
 
-            val id = db.child("products").push().key!!
+            override fun onCancelled(error: DatabaseError) {
+                Toast.makeText(this@AddProductActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 
-            db.child("products").child(id).setValue(
-                mapOf(
-                    "name" to etName.text.toString(),
-                    "price" to etPrice.text.toString(),
-                    "imageUrl" to etImage.text.toString(),
-                    "brandId" to brandMap[spBrand.selectedItem.toString()]!!,
-                    "categoryId" to categoryMap[spCategory.selectedItem.toString()]!!,
-                    "stock" to etStock.text.toString().toInt()
-                )
-            )
-            finish()
+    private fun setupClickListeners() {
+        binding.btnSaveProduct.setOnClickListener {
+            if (validateInput()) {
+                saveProduct()
+            }
         }
     }
 
-    private fun loadSpinner(ref: DatabaseReference, spinner: Spinner, map: HashMap<String, String>) {
-        ref.get().addOnSuccessListener {
-            val list = ArrayList<String>()
-            for (s in it.children) {
-                val name = s.value.toString()
-                map[name] = s.key!!
-                list.add(name)
+    private fun validateInput(): Boolean {
+        if (binding.etProductName.text.isEmpty() || binding.etPrice.text.isEmpty()
+            || binding.etImageUrl.text.isEmpty() || binding.etStock.text.isEmpty()
+        ) {
+            Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
+            return false
+        }
+        return true
+    }
+
+    private fun saveProduct() {
+        val name = binding.etProductName.text.toString()
+        val price = binding.etPrice.text.toString()
+        val imageUrl = binding.etImageUrl.text.toString()
+        val stock = binding.etStock.text.toString().toIntOrNull() ?: 0
+        val selectedBrandName = binding.spBrand.selectedItem.toString()
+        val selectedCategoryName = binding.spCategory.selectedItem.toString()
+        val brandId = brandMap[selectedBrandName]
+        val categoryId = categoryMap[selectedCategoryName]
+
+        if (brandId == null || categoryId == null) {
+            Toast.makeText(this, "Please select a brand and category", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val productId = db.child("products").push().key ?: return
+
+        val product = Product(productId, name, price, imageUrl, brandId, categoryId, stock)
+
+        db.child("products").child(productId).setValue(product).addOnCompleteListener {
+            if (it.isSuccessful) {
+                finish()
+            } else {
+                Toast.makeText(this, "Failed to save product", Toast.LENGTH_SHORT).show()
             }
-            spinner.adapter =
-                ArrayAdapter(this, android.R.layout.simple_spinner_dropdown_item, list)
         }
     }
 }

@@ -1,40 +1,54 @@
 package com.example.watchstore
 
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.example.watchstore.databinding.ActivityManageUsersBinding
 import com.google.firebase.database.*
 
 class ManageUsersActivity : AppCompatActivity() {
 
-    private lateinit var rvUsers: RecyclerView
+    private lateinit var binding: ActivityManageUsersBinding
     private lateinit var db: DatabaseReference
-    private val list = ArrayList<User>()
+    private val userList = ArrayList<User>()
+    private lateinit var valueEventListener: ValueEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_manage_users)
-
-        rvUsers = findViewById(R.id.rvUsers)
-        rvUsers.layoutManager = LinearLayoutManager(this)
+        binding = ActivityManageUsersBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         db = FirebaseDatabase.getInstance().reference.child("users")
 
-        db.addValueEventListener(object : ValueEventListener {
+        setupRecyclerView()
+        loadUsers()
+    }
+
+    private fun setupRecyclerView() {
+        binding.rvUsers.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun loadUsers() {
+        valueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                list.clear()
+                userList.clear()
                 for (s in snapshot.children) {
                     val name = s.child("name").value.toString()
                     val email = s.child("email").value.toString()
-                    list.add(User(s.key!!, name, email))
+                    s.key?.let {
+                        userList.add(User(it, name, email))
+                    }
                 }
-                rvUsers.adapter = UserAdapter(list)
+                binding.rvUsers.adapter = UserAdapter(userList)
             }
 
             override fun onCancelled(error: DatabaseError) {}
-        })
+        }
+        db.addValueEventListener(valueEventListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.removeEventListener(valueEventListener)
     }
 }

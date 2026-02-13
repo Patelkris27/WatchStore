@@ -2,59 +2,66 @@ package com.example.watchstore
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import android.widget.Button
+import com.example.watchstore.databinding.ActivityManageProductsBinding
 import com.google.firebase.database.*
 
 class ManageProductsActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityManageProductsBinding
     private lateinit var db: DatabaseReference
-    private lateinit var rvProducts: RecyclerView
-    private lateinit var btnAddProduct: Button
-    private val list = ArrayList<Product>()
+    private val productList = ArrayList<Product>()
+    private lateinit var valueEventListener: ValueEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_manage_products)
-
-        rvProducts = findViewById(R.id.rvProducts)
-        btnAddProduct = findViewById(R.id.btnAddProducts)
+        binding = ActivityManageProductsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         db = FirebaseDatabase.getInstance().reference.child("products")
 
-        rvProducts.layoutManager = LinearLayoutManager(this)
+        setupRecyclerView()
+        setupClickListeners()
+        loadProducts()
+    }
 
-        btnAddProduct.setOnClickListener {
+    private fun setupRecyclerView() {
+        binding.rvProducts.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun setupClickListeners() {
+        binding.btnAddProducts.setOnClickListener {
             startActivity(Intent(this, AddProductActivity::class.java))
         }
+    }
 
-        db.addValueEventListener(object : ValueEventListener {
+    private fun loadProducts() {
+        valueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                list.clear()
-
+                productList.clear()
                 for (s in snapshot.children) {
-                    list.add(
-                        Product(
-                            id = s.key!!,
-                            name = s.child("name").value.toString(),
-                            price = s.child("price").value.toString(),
-                            imageUrl = s.child("imageUrl").value.toString(),
-                            brandId = s.child("brandId").value.toString(),
-                            categoryId = s.child("categoryId").value.toString(),
-                            stock = s.child("stock").getValue(Int::class.java) ?: 0
-                        )
+                    val product = Product(
+                        id = s.key!!,
+                        name = s.child("name").value.toString(),
+                        price = s.child("price").value.toString(),
+                        imageUrl = s.child("imageUrl").value.toString(),
+                        brandId = s.child("brandId").value.toString(),
+                        categoryId = s.child("categoryId").value.toString(),
+                        stock = s.child("stock").getValue(Int::class.java) ?: 0
                     )
+                    productList.add(product)
                 }
-
-                rvProducts.adapter =
-                    ProductAdapter(list, FirebaseDatabase.getInstance().reference)
+                binding.rvProducts.adapter = ProductAdapter(productList, db)
             }
 
             override fun onCancelled(error: DatabaseError) {}
-        })
+        }
+        db.addValueEventListener(valueEventListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.removeEventListener(valueEventListener)
     }
 }

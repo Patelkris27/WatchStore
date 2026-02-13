@@ -8,7 +8,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Manage Products"
+        android:text="@string/manage_products_title"
         android:textSize="22sp"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
@@ -20,15 +20,15 @@
         android:id="@+id/rvProducts"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/tvTitle"
-        android:layout_above="@id/btnAddProducts"
+        android:layout_below="@+id/tvTitle"
+        android:layout_above="@+id/btnAddProducts"
         android:padding="10dp"/>
 
     <Button
         android:id="@+id/btnAddProducts"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Product"
+        android:text="@string/add_product_button"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/theme"
         android:layout_alignParentBottom="true"

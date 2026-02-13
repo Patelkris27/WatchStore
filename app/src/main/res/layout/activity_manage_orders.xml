@@ -39,7 +39,7 @@
         android:id="@+id/btnExport"
         android:layout_width="match_parent"
         android:layout_height="52dp"
-        android:text="Export Orders Report"
+        android:text="@string/export_orders_report_button"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/theme"
         android:layout_alignParentBottom="true"

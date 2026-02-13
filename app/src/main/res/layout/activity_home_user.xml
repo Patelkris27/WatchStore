@@ -13,7 +13,7 @@
 
         <TextView
             android:id="@+id/Title"
-            android:text="The Heis Watches"
+            android:text="@string/user_home_title"
             android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="@color/theme"
@@ -28,6 +28,7 @@
             android:layout_height="45dp"
             android:src="@drawable/ic_cart"
             app:tint="@color/theme"
+            android:contentDescription="@string/cart_icon_description"
             android:layout_alignParentEnd="true"/>
     </RelativeLayout>
 
@@ -80,7 +81,7 @@
         android:id="@+id/btnMyOrders"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="My Orders"
+        android:text="@string/my_orders_button"
         android:textSize="20dp"
         android:textStyle="bold"
         android:layout_marginLeft="16dp"

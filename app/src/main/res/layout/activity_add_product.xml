@@ -7,7 +7,7 @@
 
     <TextView
         android:id="@+id/tvTitle"
-        android:text="Add Product"
+        android:text="@string/add_product_title"
         android:textSize="22sp"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
@@ -18,7 +18,7 @@
 
     <EditText
         android:id="@+id/etProductName"
-        android:hint="Product name"
+        android:hint="@string/product_name_hint"
         android:layout_below="@id/tvTitle"
         android:layout_marginTop="24dp"
         android:textColor="@color/theme"
@@ -27,7 +27,7 @@
 
     <EditText
         android:id="@+id/etPrice"
-        android:hint="Price"
+        android:hint="@string/price_hint"
         android:inputType="number"
         android:layout_below="@id/etProductName"
         android:textColor="@color/theme"
@@ -38,16 +38,16 @@
         android:id="@+id/etStock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Stock Quantity"
+        android:hint="@string/stock_quantity_hint"
         android:inputType="number"
-        android:layout_below="@+id/etPrice"
+        android:layout_below="@id/etPrice"
         android:layout_marginTop="16dp"
         android:textColor="@color/theme"/>
 
 
     <EditText
         android:id="@+id/etImageUrl"
-        android:hint="Image URL"
+        android:hint="@string/image_url_hint"
         android:layout_below="@id/etStock"
         android:textColor="@color/theme"
         android:layout_marginTop="16dp"
@@ -72,7 +72,7 @@
 
     <Button
         android:id="@+id/btnSaveProduct"
-        android:text="Save Product"
+        android:text="@string/save_product_button"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/theme"
         android:layout_below="@id/spCategory"

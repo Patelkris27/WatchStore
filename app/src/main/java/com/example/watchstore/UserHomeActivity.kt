@@ -4,29 +4,24 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.widget.Button
-import android.widget.ImageView
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.widget.ViewPager2
+import com.example.watchstore.databinding.ActivityHomeUserBinding
 import com.google.firebase.database.*
-import me.relex.circleindicator.CircleIndicator3
 import java.util.*
 
 class UserHomeActivity : AppCompatActivity() {
 
-    private lateinit var rvProducts: RecyclerView
-    private val list = ArrayList<Product>()
+    private lateinit var binding: ActivityHomeUserBinding
+    private val productList = ArrayList<Product>()
     private lateinit var db: DatabaseReference
     private var selectedBrand: String? = null
     private var selectedCategory: String? = null
+    private lateinit var productsValueEventListener: ValueEventListener
 
     // Banner
-    private lateinit var viewPager: ViewPager2
-    private lateinit var indicator: CircleIndicator3
-    private lateinit var bannerAdapter: BannerAdapter
     private val bannerImages = listOf(
         R.drawable.banner1, // Replace with your banner images
         R.drawable.banner2,
@@ -38,76 +33,21 @@ class UserHomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_home_user)
+        binding = ActivityHomeUserBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        // Banner setup
-        viewPager = findViewById(R.id.viewPagerBanner)
-        indicator = findViewById(R.id.indicator)
+        setupBanner()
+        setupRecyclerViews()
+        loadFilters()
+        loadProducts()
+        setupClickListeners()
+    }
 
-        bannerAdapter = BannerAdapter(bannerImages)
-        viewPager.adapter = bannerAdapter
-        indicator.setViewPager(viewPager)
-
-        // Auto scroll
+    private fun setupBanner() {
+        val bannerAdapter = BannerAdapter(bannerImages)
+        binding.viewPagerBanner.adapter = bannerAdapter
+        binding.indicator.setViewPager(binding.viewPagerBanner)
         createSlideShow()
-
-
-        rvProducts = findViewById(R.id.rvUserProducts)
-        rvProducts.layoutManager = GridLayoutManager(this, 2)
-        val rvBrands = findViewById<RecyclerView>(R.id.rvBrands)
-        val rvCategories = findViewById<RecyclerView>(R.id.rvCategories)
-
-        rvBrands.layoutManager =
-            androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-        rvCategories.layoutManager =
-            androidx.recyclerview.widget.LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
-
-        loadFilters("brands", rvBrands) { brandId ->
-            selectedBrand = brandId
-            applyFilter()
-        }
-
-        loadFilters("categories", rvCategories) { categoryId ->
-            selectedCategory = categoryId
-            applyFilter()
-        }
-
-
-        db = FirebaseDatabase.getInstance().reference.child("products")
-
-        db.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-
-                list.clear()
-
-                for (s in snapshot.children) {
-                    list.add(
-                        Product(
-                            id = s.key ?: "",
-                            name = s.child("name").value.toString(),
-                            price = s.child("price").value.toString(),
-                            imageUrl = s.child("imageUrl").value.toString(),
-                            brandId = s.child("brandId").value.toString(),
-                            categoryId = s.child("categoryId").value.toString(),
-                            stock = s.child("stock").getValue(Int::class.java) ?: 0
-                        )
-                    )
-                }
-
-                rvProducts.adapter = UserProductAdapter(list)
-
-            }
-
-            override fun onCancelled(error: DatabaseError) {}
-        })
-        findViewById<ImageView>(R.id.btnCart).setOnClickListener {
-            startActivity(Intent(this, CartActivity::class.java))
-        }
-        findViewById<Button>(R.id.btnMyOrders).setOnClickListener {
-            startActivity(Intent(this, UserOrdersActivity::class.java))
-        }
-
     }
 
     private fun createSlideShow() {
@@ -115,7 +55,7 @@ class UserHomeActivity : AppCompatActivity() {
             if (currentPage == bannerImages.size) {
                 currentPage = 0
             }
-            viewPager.setCurrentItem(currentPage++, true)
+            binding.viewPagerBanner.setCurrentItem(currentPage++, true)
         }
 
         timer = Timer()
@@ -126,27 +66,41 @@ class UserHomeActivity : AppCompatActivity() {
         }, 3000, 3000)
     }
 
-    private fun loadFilters(
+    private fun setupRecyclerViews() {
+        binding.rvUserProducts.layoutManager = GridLayoutManager(this, 2)
+        binding.rvBrands.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+        binding.rvCategories.layoutManager = LinearLayoutManager(this, RecyclerView.HORIZONTAL, false)
+    }
+
+    private fun loadFilters() {
+        loadFilterData("brands", binding.rvBrands) { brandId ->
+            selectedBrand = brandId
+            applyFilter()
+        }
+
+        loadFilterData("categories", binding.rvCategories) { categoryId ->
+            selectedCategory = categoryId
+            applyFilter()
+        }
+    }
+
+    private fun loadFilterData(
         node: String,
         rv: RecyclerView,
         onSelect: (String?) -> Unit
     ) {
         FirebaseDatabase.getInstance().reference.child(node)
             .addListenerForSingleValueEvent(object : ValueEventListener {
-
                 override fun onDataChange(snapshot: DataSnapshot) {
-
                     val items = ArrayList<Pair<String, String>>()
                     items.add("All" to "")
 
                     for (s in snapshot.children) {
-
                         val name = when {
                             s.value is String -> s.value.toString()
                             s.child("name").exists() -> s.child("name").value.toString()
                             else -> continue
                         }
-
                         items.add(name to s.key!!)
                     }
 
@@ -159,17 +113,51 @@ class UserHomeActivity : AppCompatActivity() {
             })
     }
 
+    private fun loadProducts() {
+        db = FirebaseDatabase.getInstance().reference.child("products")
+        productsValueEventListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                productList.clear()
+                for (s in snapshot.children) {
+                    val product = Product(
+                        id = s.key ?: "",
+                        name = s.child("name").value.toString(),
+                        price = s.child("price").value.toString(),
+                        imageUrl = s.child("imageUrl").value.toString(),
+                        brandId = s.child("brandId").value.toString(),
+                        categoryId = s.child("categoryId").value.toString(),
+                        stock = s.child("stock").getValue(Int::class.java) ?: 0
+                    )
+                    productList.add(product)
+                }
+                applyFilter()
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
+        }
+        db.addValueEventListener(productsValueEventListener)
+    }
+
     private fun applyFilter() {
-        val filtered = list.filter {
+        val filtered = productList.filter {
             (selectedBrand == null || it.brandId == selectedBrand) &&
                     (selectedCategory == null || it.categoryId == selectedCategory)
         }
-        rvProducts.adapter = UserProductAdapter(filtered)
+        binding.rvUserProducts.adapter = UserProductAdapter(filtered)
+    }
+
+    private fun setupClickListeners() {
+        binding.btnCart.setOnClickListener {
+            startActivity(Intent(this, CartActivity::class.java))
+        }
+        binding.btnMyOrders.setOnClickListener {
+            startActivity(Intent(this, UserOrdersActivity::class.java))
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
         timer?.cancel()
+        db.removeEventListener(productsValueEventListener)
     }
-
 }

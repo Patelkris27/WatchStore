@@ -2,48 +2,52 @@ package com.example.watchstore
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.example.watchstore.databinding.ActivityHomeAdminBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.android.material.button.MaterialButton
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class AdminHomeActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityHomeAdminBinding
     private lateinit var auth: FirebaseAuth
+    private lateinit var db: DatabaseReference
+    private lateinit var ordersValueEventListener: ValueEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_home_admin)
-        val tvUsers = findViewById<TextView>(R.id.tvTotalUsers)
-        val tvOrders = findViewById<TextView>(R.id.tvTotalOrders)
-        val tvRevenue = findViewById<TextView>(R.id.tvRevenue)
-        val tvToday = findViewById<TextView>(R.id.tvTodayOrders)
+        binding = ActivityHomeAdminBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        val db = FirebaseDatabase.getInstance().reference
+        auth = FirebaseAuth.getInstance()
+        db = FirebaseDatabase.getInstance().reference
 
+        setupViews()
+        loadAnalytics()
+        setupDashboard()
+    }
+
+    private fun setupViews() {
+        binding.tvAdminName.text = getString(R.string.admin_name)
+        binding.tvAdminEmail.text = auth.currentUser?.email ?: ""
+        binding.rvDashboard.layoutManager = GridLayoutManager(this, 2)
+    }
+
+    private fun loadAnalytics() {
         db.child("users").addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                tvUsers.text = "Users: ${snapshot.childrenCount}"
+                binding.tvTotalUsers.text = getString(R.string.total_users_format, snapshot.childrenCount)
             }
+
             override fun onCancelled(error: DatabaseError) {}
         })
 
-        db.child("orders").addValueEventListener(object : ValueEventListener {
+        ordersValueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-
-                tvOrders.text = "Orders: ${snapshot.childrenCount}"
+                binding.tvTotalOrders.text = getString(R.string.total_orders_format, snapshot.childrenCount)
 
                 var revenue = 0
                 var todayCount = 0
@@ -57,45 +61,39 @@ class AdminHomeActivity : AppCompatActivity() {
                     if (date == today) todayCount++
                 }
 
-                tvRevenue.text = "Revenue: ₹$revenue"
-                tvToday.text = "Today: $todayCount"
+                binding.tvRevenue.text = getString(R.string.total_revenue_format, revenue.toString())
+                binding.tvTodayOrders.text = getString(R.string.today_orders_format, todayCount)
             }
 
             override fun onCancelled(error: DatabaseError) {}
-        })
-
-
-        auth = FirebaseAuth.getInstance()
-
-        val rvDashboard = findViewById<RecyclerView>(R.id.rvDashboard)
-        val tvAdminName = findViewById<TextView>(R.id.tvAdminName)
-        val tvAdminEmail = findViewById<TextView>(R.id.tvAdminEmail)
-
-        tvAdminName.text = "Admin"
-        tvAdminEmail.text = auth.currentUser?.email ?: ""
-
-        rvDashboard.layoutManager = GridLayoutManager(this, 2)
-
-        val items = listOf(
-            DashboardItem("Brands", R.drawable.ic_brand),
-            DashboardItem("Categories", R.drawable.ic_category),
-            DashboardItem("Products", R.drawable.ic_product),
-            DashboardItem("Orders", R.drawable.ic_orders),
-            DashboardItem("Users", R.drawable.ic_users),
-            DashboardItem("Settings",R.drawable.ic_settings)
-        )
-
-        rvDashboard.adapter = DashboardAdapter(items) { title ->
-            when (title) {
-                "Brands" -> startActivity(Intent(this, ManageBrandsActivity::class.java))
-                "Categories" -> startActivity(Intent(this, ManageCategoriesActivity::class.java))
-                "Products" -> startActivity(Intent(this, ManageProductsActivity::class.java))
-                "Orders" -> startActivity(Intent(this, ManageOrdersActivity::class.java))
-                "Users" -> startActivity(Intent(this, ManageUsersActivity::class.java))
-                "Settings" -> startActivity(Intent(this,AdminSettingsActivity::class.java))
-            }
         }
-
+        db.child("orders").addValueEventListener(ordersValueEventListener)
     }
 
+    private fun setupDashboard() {
+        val items = listOf(
+            DashboardItem(getString(R.string.brands), R.drawable.ic_brand),
+            DashboardItem(getString(R.string.categories), R.drawable.ic_category),
+            DashboardItem(getString(R.string.products), R.drawable.ic_product),
+            DashboardItem(getString(R.string.orders), R.drawable.ic_orders),
+            DashboardItem(getString(R.string.users), R.drawable.ic_users),
+            DashboardItem(getString(R.string.settings), R.drawable.ic_settings)
+        )
+
+        binding.rvDashboard.adapter = DashboardAdapter(items) { title ->
+            when (title) {
+                getString(R.string.brands) -> startActivity(Intent(this, ManageBrandsActivity::class.java))
+                getString(R.string.categories) -> startActivity(Intent(this, ManageCategoriesActivity::class.java))
+                getString(R.string.products) -> startActivity(Intent(this, ManageProductsActivity::class.java))
+                getString(R.string.orders) -> startActivity(Intent(this, ManageOrdersActivity::class.java))
+                getString(R.string.users) -> startActivity(Intent(this, ManageUsersActivity::class.java))
+                getString(R.string.settings) -> startActivity(Intent(this, AdminSettingsActivity::class.java))
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.child("orders").removeEventListener(ordersValueEventListener)
+    }
 }

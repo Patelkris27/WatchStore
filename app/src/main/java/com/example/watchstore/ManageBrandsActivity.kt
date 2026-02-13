@@ -2,47 +2,57 @@ package com.example.watchstore
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.View
-import android.widget.Button
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import com.example.watchstore.databinding.ActivityManageBrandsBinding
 import com.google.firebase.database.*
 
 class ManageBrandsActivity : AppCompatActivity() {
 
+    private lateinit var binding: ActivityManageBrandsBinding
     private lateinit var db: DatabaseReference
-    private val list = ArrayList<Brand>()
+    private val brandList = ArrayList<Brand>()
+    private lateinit var valueEventListener: ValueEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContentView(R.layout.activity_manage_brands)
-
-        val rvBrands = findViewById<RecyclerView>(R.id.rvBrands)
-        val btnAddBrand = findViewById<Button>(R.id.btnAddBrand)
-
+        binding = ActivityManageBrandsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         db = FirebaseDatabase.getInstance().reference.child("brands")
 
-        rvBrands.layoutManager = LinearLayoutManager(this)
+        setupRecyclerView()
+        setupClickListeners()
+        loadBrands()
+    }
 
-        btnAddBrand.setOnClickListener {
+    private fun setupRecyclerView() {
+        binding.rvBrands.layoutManager = LinearLayoutManager(this)
+    }
+
+    private fun setupClickListeners() {
+        binding.btnAddBrand.setOnClickListener {
             startActivity(Intent(this, AddBrandActivity::class.java))
         }
+    }
 
-        db.addValueEventListener(object : ValueEventListener {
+    private fun loadBrands() {
+        valueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                list.clear()
+                brandList.clear()
                 for (s in snapshot.children) {
-                    list.add(Brand(s.key!!, s.value.toString()))
+                    brandList.add(Brand(s.key!!, s.value.toString()))
                 }
-                rvBrands.adapter = BrandAdapter(list)
-
+                binding.rvBrands.adapter = BrandAdapter(brandList)
             }
 
             override fun onCancelled(error: DatabaseError) {}
-        })
+        }
+        db.addValueEventListener(valueEventListener)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        db.removeEventListener(valueEventListener)
     }
 }

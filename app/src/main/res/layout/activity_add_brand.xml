@@ -9,7 +9,7 @@
         android:id="@+id/tvTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add Brand"
+        android:text="@string/add_brand_title"
         android:textSize="22sp"
         android:layout_centerHorizontal="true"
         android:textStyle="bold"
@@ -20,7 +20,7 @@
         android:id="@+id/etBrandName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Brand name"
+        android:hint="@string/brand_name_hint"
         android:layout_below="@id/tvTitle"
         android:layout_marginTop="24dp"/>
 
@@ -28,7 +28,7 @@
         android:id="@+id/btnSaveBrand"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Save Brand"
+        android:text="@string/save_brand_button"
         android:textColor="@android:color/white"
         android:backgroundTint="@color/theme"
         android:layout_below="@id/etBrandName"

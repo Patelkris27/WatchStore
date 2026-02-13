@@ -1,17 +1,16 @@
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.google.gms.google.services)
 }
 
 android {
     namespace = "com.example.watchstore"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.watchstore"
         minSdk = 23
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -31,8 +30,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-    kotlinOptions {
-        jvmTarget = "1.8"
+    buildFeatures {
+        viewBinding = true
     }
 }
 
@@ -46,10 +45,10 @@ dependencies {
     implementation(libs.androidx.constraintlayout)
 
     // Firebase BOM + KTX
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
-    implementation("com.google.firebase:firebase-auth-ktx")
-    implementation("com.google.firebase:firebase-database-ktx")
-    implementation("com.google.firebase:firebase-firestore-ktx")
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.firestore.ktx)
 
     // Test
     testImplementation(libs.junit)
@@ -57,12 +56,7 @@ dependencies {
     androidTestImplementation(libs.androidx.espresso.core)
 
     // Optional
-    implementation("androidx.activity:activity:1.9.0")
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    implementation ("com.github.PhilJay:MPAndroidChart:v3.1.0")
-    implementation ("me.relex:circleindicator:2.1.6")
-
-
-
+    implementation(libs.glide)
+    implementation(libs.mpandroidchart)
+    implementation(libs.circleindicator)
 }
