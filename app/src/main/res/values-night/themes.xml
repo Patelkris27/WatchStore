@@ -2,6 +2,6 @@
     <!-- Base application theme. -->
     <style name="Base.Theme.WatchStore" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Customize your dark theme here. -->
-        <item name="android:fontFamily">@font/nunito_sans</item>
+<!--        <item name="android:fontFamily">@font/nunito_sans</item>-->
     </style>
 </resources>
