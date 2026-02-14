@@ -1,3 +1,4 @@
+
 [versions]
 agp = "9.0.1"
 kotlin = "2.3.10"
@@ -18,6 +19,7 @@ glide = "5.0.5"
 mpandroidchart = "v3.1.0"
 circleindicator = "2.1.6"
 firebaseBom = "34.9.0"
+circleimageview = "3.1.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,9 +38,11 @@ glide = { group = "com.github.bumptech.glide", name = "glide", version.ref = "gl
 mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", version.ref = "mpandroidchart" }
 circleindicator = { group = "me.relex", name = "circleindicator", version.ref = "circleindicator" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
 
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }
+

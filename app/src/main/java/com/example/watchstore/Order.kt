@@ -1,15 +1,9 @@
 package com.example.watchstore
 
 data class Order(
-    val id: String = "",
-    val user: String = "",
-    val productId: String = "",
-    val quantity: Int = 0,
-    val total: Int = 0,
-    val date: String = "",
-    val status: String = "Pending",
-    val paymentMethod: String = "",
-    val address: String = "",
-    val name: String = "",
-    val phone: String = ""
+    val orderId: String = "",
+    val userId: String = "",
+    val products: List<Product> = emptyList(),
+    val totalPrice: Double = 0.0,
+    val status: String = "Pending"
 )

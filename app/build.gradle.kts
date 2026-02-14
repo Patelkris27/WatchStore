@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
+    id("kotlin-parcelize")
 }
 
 android {
@@ -59,4 +60,5 @@ dependencies {
     implementation(libs.glide)
     implementation(libs.mpandroidchart)
     implementation(libs.circleindicator)
+    implementation(libs.circleimageview)
 }

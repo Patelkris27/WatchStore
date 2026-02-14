@@ -17,6 +17,9 @@
             android:name=".CheckoutActivity"
             android:exported="false" />
         <activity
+            android:name=".OrderDetailsActivity"
+            android:exported="false" />
+        <activity
             android:name=".UserOrdersActivity"
             android:exported="false" />
         <activity

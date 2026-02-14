@@ -18,8 +18,10 @@ import java.util.*
 class ProductDetailsActivity : AppCompatActivity() {
 
     private var stock = 0
-    private var price = 0
+    private var price = 0.0
     private var selectedQty = 1
+    private var productName = ""
+    private var productImageUrl = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -60,9 +62,11 @@ class ProductDetailsActivity : AppCompatActivity() {
 
         db.child("products").child(productId).get().addOnSuccessListener { s ->
 
-            tvName.text = s.child("name").value.toString()
-            price = s.child("price").value.toString().toInt()
+            productName = s.child("name").value.toString()
+            tvName.text = productName
+            price = s.child("price").getValue(Double::class.java) ?: 0.0
             stock = s.child("stock").getValue(Int::class.java) ?: 0
+            productImageUrl = s.child("imageUrl").value.toString()
 
             tvPrice.text = "₹$price"
 
@@ -73,7 +77,7 @@ class ProductDetailsActivity : AppCompatActivity() {
             }
 
             Glide.with(this)
-                .load(s.child("imageUrl").value.toString())
+                .load(productImageUrl)
                 .into(img)
 
             loadName("brands", s.child("brandId").value.toString(), tvBrand)
@@ -133,29 +137,40 @@ class ProductDetailsActivity : AppCompatActivity() {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseDatabase.getInstance().reference
 
-        if (stock <= 0) {
+        if (stock < selectedQty) {
             Toast.makeText(this, "Out of stock", Toast.LENGTH_SHORT).show()
             return
         }
 
         val orderId = db.child("orders").push().key!!
-        val date = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date())
 
-        val orderData = mapOf(
-            "userId" to uid,
-            "productId" to productId,
-            "quantity" to 1,
-            "total" to price,
-            "status" to "Pending",
-            "date" to date
+        val product = Product(
+            id = productId,
+            name = productName,
+            price = price,
+            imageUrl = productImageUrl,
+            stock = selectedQty
+        )
+        
+        val cartList = ArrayList<Product>()
+        cartList.add(product)
+
+        val totalPrice = price * selectedQty
+
+        val order = Order(
+            orderId = orderId,
+            userId = uid,
+            products = cartList,
+            totalPrice = totalPrice,
+            status = "Pending"
         )
 
-        db.child("orders").child(orderId).setValue(orderData)
+        db.child("orders").child(orderId).setValue(order)
             .addOnSuccessListener {
 
                 db.child("products").child(productId)
                     .child("stock")
-                    .setValue(stock - 1)
+                    .setValue(stock - selectedQty)
 
                 Toast.makeText(this, "Order placed", Toast.LENGTH_SHORT).show()
 

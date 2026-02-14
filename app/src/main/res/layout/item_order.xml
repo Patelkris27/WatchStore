@@ -31,4 +31,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"/>
 
+    <Spinner
+        android:id="@+id/spinnerStatus"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:padding="10dp"
+        android:layout_centerVertical="true"
+        android:entries="@array/order_status_array" />
+
 </RelativeLayout>

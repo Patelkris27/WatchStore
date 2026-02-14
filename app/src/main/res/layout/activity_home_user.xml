@@ -1,94 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@android:color/white">
+    tools:context=".UserHomeActivity">
 
-    <RelativeLayout
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottom_navigation" />
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottom_navigation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:id="@+id/tvTitle"
-        android:padding="10dp">
-
-        <TextView
-            android:id="@+id/Title"
-            android:text="@string/user_home_title"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:textColor="@color/theme"
-            android:fontFamily="sans-serif-condensed-medium"
-            android:layout_centerHorizontal="true"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
-
-        <ImageView
-            android:id="@+id/btnCart"
-            android:layout_width="30dp"
-            android:layout_height="45dp"
-            android:src="@drawable/ic_cart"
-            app:tint="@color/theme"
-            android:contentDescription="@string/cart_icon_description"
-            android:layout_alignParentEnd="true"/>
-    </RelativeLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutFilters"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/tvTitle"
-        android:orientation="vertical"
-        android:padding="8dp">
-
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvBrands"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:orientation="horizontal"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvCategories"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="6dp"
-            android:orientation="horizontal"/>
-    </LinearLayout>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/viewPagerBanner"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_below="@id/layoutFilters"
-        android:layout_marginTop="8dp"
-        android:paddingStart="20dp"
-        android:paddingEnd="20dp"/>
-
-    <me.relex.circleindicator.CircleIndicator3
-        android:id="@+id/indicator"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_below="@id/viewPagerBanner"/>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvUserProducts"
-        android:layout_below="@id/indicator"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="12dp"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnMyOrders"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/my_orders_button"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_below="@id/rvUserProducts"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@color/theme"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_alignParentBottom="true"
+        android:background="@color/white"
+        app:itemIconTint="@color/theme"
+        app:itemTextColor="@color/theme"
+        app:menu="@menu/bottom_nav_menu" />
 
 </RelativeLayout>

@@ -22,7 +22,7 @@ class CheckoutActivity : AppCompatActivity() {
     private lateinit var rgPayment: RadioGroup
     private lateinit var tvTotalAmount: TextView
     private lateinit var btnPlaceOrder: Button
-    private var totalAmount = 0
+    private var totalAmount = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,7 +43,7 @@ class CheckoutActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 for (s in snapshot.children) {
                     val qty = s.child("quantity").getValue(Int::class.java) ?: 0
-                    val price = s.child("price").getValue(Int::class.java) ?: 0
+                    val price = s.child("price").getValue(Double::class.java) ?: 0.0
                     totalAmount += qty * price
                 }
                 tvTotalAmount.text = "Total: ₹$totalAmount"
@@ -101,31 +101,40 @@ class CheckoutActivity : AppCompatActivity() {
 
         cartRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                val productsList = ArrayList<Product>()
+                var total = 0.0
                 for (itemSnapshot in snapshot.children) {
                     val cartItem = itemSnapshot.getValue(CartItem::class.java)
                     if (cartItem != null) {
-                        val order = Order(
-                            id = orderId,
-                            productId = cartItem.productId,
-                            quantity = cartItem.quantity,
-                            total = cartItem.price * cartItem.quantity,
-                            date = SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(Date()),
-                            status = "Pending",
-                            user = FirebaseAuth.getInstance().currentUser?.email ?: "",
-                            paymentMethod = paymentMethod,
-                            address = address,
-                            name = name,
-                            phone = phone
+                        val product = Product(
+                            id = cartItem.productId,
+                            price = cartItem.price.toDouble(),
+                            imageUrl = cartItem.imageUrl,
+                            stock = cartItem.quantity
                         )
-                        ordersRef.child(orderId).setValue(order)
+                        productsList.add(product)
+                        total += cartItem.price * cartItem.quantity
                     }
                 }
 
-                // Clear the cart
-                cartRef.removeValue()
+                val order = Order(
+                    orderId = orderId,
+                    userId = uid,
+                    products = productsList,
+                    totalPrice = total,
+                    status = "Pending"
+                )
 
-                Toast.makeText(this@CheckoutActivity, "Order placed successfully", Toast.LENGTH_SHORT).show()
-                finish()
+                ordersRef.child(orderId).setValue(order).addOnCompleteListener {
+                    if (it.isSuccessful) {
+                        // Clear the cart
+                        cartRef.removeValue()
+                        Toast.makeText(this@CheckoutActivity, "Order placed successfully", Toast.LENGTH_SHORT).show()
+                        finish()
+                    } else {
+                        Toast.makeText(this@CheckoutActivity, "Failed to place order", Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {

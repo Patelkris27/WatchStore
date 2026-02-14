@@ -1,37 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white">
+    tools:context=".ManageOrdersActivity">
 
-    <!-- Charts container -->
-    <LinearLayout
-        android:id="@+id/layoutCharts"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+    <TextView
+        android:id="@+id/tvTitle"
+        android:text="Manage Orders"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:textColor="@color/theme"
         android:layout_marginTop="70dp"
-        android:padding="16dp">
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
 
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/chartOrders"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"/>
-
-        <com.github.mikephil.charting.charts.LineChart
-            android:id="@+id/chartRevenue"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_marginTop="16dp"/>
-
-    </LinearLayout>
-
-    <!-- Orders list -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvOrders"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/layoutCharts"
         android:layout_above="@id/btnExport"
+        android:layout_below="@+id/tvTitle"
         android:padding="8dp"/>
 
     <!-- Export button -->
@@ -44,5 +35,4 @@
         android:backgroundTint="@color/theme"
         android:layout_alignParentBottom="true"
         android:layout_margin="16dp"/>
-
 </RelativeLayout>

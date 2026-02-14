@@ -1,12 +1,15 @@
 package com.example.watchstore
 
+import android.content.Intent
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.watchstore.OrderDetailsActivity
 import com.example.watchstore.utils.DialogUtil
 import com.google.firebase.database.FirebaseDatabase
 
@@ -17,11 +20,10 @@ class UserOrderAdapter(
     private val db = FirebaseDatabase.getInstance().reference.child("orders")
 
     class VH(v: View) : RecyclerView.ViewHolder(v) {
-        val tvProduct: TextView = v.findViewById(R.id.tvProduct)
-        val tvQty: TextView = v.findViewById(R.id.tvQty)
-        val tvTotal: TextView = v.findViewById(R.id.tvTotal)
+        val tvDate: TextView = v.findViewById(R.id.tvDate)
         val tvStatus: TextView = v.findViewById(R.id.tvStatus)
         val btnCancel: Button = v.findViewById(R.id.btnCancel)
+        val llOrder: LinearLayout = v.findViewById(R.id.llOrder)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
@@ -34,8 +36,6 @@ class UserOrderAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val o = list[position]
 
-        holder.tvQty.text = "Qty: ${o.quantity}"
-        holder.tvTotal.text = "Total: ₹${o.total}"
         holder.tvStatus.text = o.status
 
         holder.tvStatus.setTextColor(
@@ -46,11 +46,11 @@ class UserOrderAdapter(
             }
         )
 
-        if (o.status == "Delivered" || o.status == "Cancelled") {
-            holder.btnCancel.visibility = View.GONE
-        } else {
-            holder.btnCancel.visibility = View.VISIBLE
-        }
+        holder.btnCancel.visibility =
+            if (o.status == "Delivered" || o.status == "Cancelled")
+                View.GONE
+            else
+                View.VISIBLE
 
         holder.btnCancel.setOnClickListener {
             DialogUtil.showDeleteDialog(
@@ -58,18 +58,19 @@ class UserOrderAdapter(
                 "Cancel Order",
                 "Are you sure you want to cancel this order?"
             ) {
-                db.child(o.id).child("status").setValue("Cancelled")
+                db.child(o.orderId).child("status").setValue("Cancelled")
             }
         }
 
-        FirebaseDatabase.getInstance().reference
-            .child("products").child(o.productId)
-            .get()
-            .addOnSuccessListener {
-                holder.tvProduct.text =
-                    it.child("name").value?.toString() ?: ""
+        holder.llOrder.setOnClickListener {
+            val intent = Intent(holder.itemView.context, OrderDetailsActivity::class.java)
+            for (product in o.products) {
+                // No need to do anything here, just iterating
             }
+            holder.itemView.context.startActivity(intent)
+        }
     }
+
 
     override fun getItemCount(): Int = list.size
 }

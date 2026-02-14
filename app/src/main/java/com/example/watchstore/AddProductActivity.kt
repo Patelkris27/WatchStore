@@ -80,7 +80,7 @@ class AddProductActivity : AppCompatActivity() {
 
     private fun saveProduct() {
         val name = binding.etProductName.text.toString()
-        val price = binding.etPrice.text.toString()
+        val price = binding.etPrice.text.toString().toDoubleOrNull() ?: 0.0
         val imageUrl = binding.etImageUrl.text.toString()
         val stock = binding.etStock.text.toString().toIntOrNull() ?: 0
         val selectedBrandName = binding.spBrand.selectedItem.toString()
@@ -97,8 +97,8 @@ class AddProductActivity : AppCompatActivity() {
 
         val product = Product(productId, name, price, imageUrl, brandId, categoryId, stock)
 
-        db.child("products").child(productId).setValue(product).addOnCompleteListener {
-            if (it.isSuccessful) {
+        db.child("products").child(productId).setValue(product).addOnCompleteListener { task ->
+            if (task.isSuccessful) {
                 finish()
             } else {
                 Toast.makeText(this, "Failed to save product", Toast.LENGTH_SHORT).show()

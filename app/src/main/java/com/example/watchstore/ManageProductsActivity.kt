@@ -2,6 +2,7 @@ package com.example.watchstore
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.watchstore.databinding.ActivityManageProductsBinding
@@ -19,7 +20,7 @@ class ManageProductsActivity : AppCompatActivity() {
         binding = ActivityManageProductsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        db = FirebaseDatabase.getInstance().reference.child("products")
+        db = FirebaseDatabase.getInstance().reference
 
         setupRecyclerView()
         setupClickListeners()
@@ -41,27 +42,23 @@ class ManageProductsActivity : AppCompatActivity() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 productList.clear()
                 for (s in snapshot.children) {
-                    val product = Product(
-                        id = s.key!!,
-                        name = s.child("name").value.toString(),
-                        price = s.child("price").value.toString(),
-                        imageUrl = s.child("imageUrl").value.toString(),
-                        brandId = s.child("brandId").value.toString(),
-                        categoryId = s.child("categoryId").value.toString(),
-                        stock = s.child("stock").getValue(Int::class.java) ?: 0
-                    )
-                    productList.add(product)
+                    val product = s.getValue(Product::class.java)
+                    if (product != null) {
+                        productList.add(product)
+                    }
                 }
-                binding.rvProducts.adapter = ProductAdapter(productList, db)
+                binding.rvProducts.adapter = ProductAdapter(productList, db, emptyMap(), emptyMap())
+                binding.rvProducts.adapter?.notifyDataSetChanged()
             }
 
             override fun onCancelled(error: DatabaseError) {}
         }
-        db.addValueEventListener(valueEventListener)
+
+        db.child("products").addValueEventListener(valueEventListener)
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        db.removeEventListener(valueEventListener)
+        db.child("products").removeEventListener(valueEventListener)
     }
 }

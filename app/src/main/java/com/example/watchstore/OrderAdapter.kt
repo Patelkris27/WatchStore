@@ -1,57 +1,54 @@
 package com.example.watchstore
 
-import android.app.AlertDialog
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.PopupMenu
-import android.widget.TextView
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.watchstore.databinding.ItemOrderBinding
 import com.google.firebase.database.FirebaseDatabase
 
-class OrderAdapter(
-    private val list: List<Order>
-) : RecyclerView.Adapter<OrderAdapter.ViewHolder>() {
+class OrderAdapter(private val orders: List<Order>) : RecyclerView.Adapter<OrderAdapter.OrderViewHolder>() {
 
-    private val db = FirebaseDatabase.getInstance().reference.child("orders")
-
-
-    class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
-        val tvOrderId: TextView = v.findViewById(R.id.tvOrderId)
-        val tvTotal: TextView = v.findViewById(R.id.tvTotal)
-        val tvStatus: TextView = v.findViewById(R.id.tvStatus)
-        val tvName : TextView = v.findViewById(R.id.tvName)
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrderViewHolder {
+        val binding = ItemOrderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return OrderViewHolder(binding)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_order, parent, false)
-        )
+    override fun onBindViewHolder(holder: OrderViewHolder, position: Int) {
+        val order = orders[position]
+        holder.bind(order)
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val order = list[position]
+    override fun getItemCount(): Int = orders.size
 
-        holder.tvOrderId.text = "Order ID: ${order.id}"
-        holder.tvName.text = "UserName: ${order.user}"
-        holder.tvTotal.text = "Total: ₹${order.total}"
-        holder.tvStatus.text = "Status: ${order.status}"
+    inner class OrderViewHolder(private val binding: ItemOrderBinding) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(order: Order) {
+            binding.tvOrderId.text = "Order ID: ${order.orderId}"
+            binding.tvTotal.text = "Total: Rs${order.totalPrice}"
+            binding.tvStatus.text = "Status: ${order.status}"
 
-        holder.itemView.setOnLongClickListener {
-            val statuses = arrayOf("Pending", "Shipped", "Delivered", "Cancelled")
-            val popup = PopupMenu(holder.itemView.context, it)
-            for (status in statuses) {
-                popup.menu.add(status)
+            FirebaseDatabase.getInstance().reference.child("users").child(order.userId).get().addOnSuccessListener {
+                binding.tvName.text = it.child("name").value?.toString() ?: ""
             }
-            popup.setOnMenuItemClickListener { item ->
-                db.child(order.id).child("status").setValue(item.title.toString())
-                true
+
+            val statuses = itemView.context.resources.getStringArray(R.array.order_status_array)
+            val adapter = ArrayAdapter(itemView.context, android.R.layout.simple_spinner_item, statuses)
+            binding.spinnerStatus.adapter = adapter
+            binding.spinnerStatus.setSelection(statuses.indexOf(order.status))
+
+            binding.spinnerStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
+                    val newStatus = statuses[position]
+                    if (newStatus != order.status) {
+                        FirebaseDatabase.getInstance().reference.child("orders").child(order.orderId).child("status").setValue(newStatus)
+                    }
+                }
+
+                override fun onNothingSelected(parent: AdapterView<*>?) {
+                }
             }
-            popup.show()
-            true
         }
     }
-
-    override fun getItemCount(): Int = list.size
 }
