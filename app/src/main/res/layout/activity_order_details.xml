@@ -8,6 +8,19 @@
     android:padding="16dp"
     tools:context=".OrderDetailsActivity">
 
+    <TextView
+        android:id="@+id/tvTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="My Orders"
+        android:textSize="30sp"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:layout_gravity="center"
+        android:textStyle="bold"
+        android:textColor="@color/theme"
+        android:layout_marginTop="50dp"
+        android:layout_marginStart="16dp"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvProducts"
         android:layout_width="match_parent"
