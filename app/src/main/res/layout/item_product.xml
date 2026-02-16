@@ -15,7 +15,7 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:layout_weight="1"
-    android:layout_marginTop="8dp">
+    android:layout_marginTop="6dp">
     <TextView
         android:id="@+id/tvProduct"
         android:layout_marginStart="12dp"
