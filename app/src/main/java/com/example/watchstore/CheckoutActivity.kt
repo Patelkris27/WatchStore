@@ -144,21 +144,19 @@ class CheckoutActivity : AppCompatActivity() {
                                     // All checks passed, proceed to place order
                                     val orderId = db.child("orders").push().key!!
                                     val childUpdates = mutableMapOf<String, Any>()
-                                    val productsForOrder = ArrayList<Product>()
                                     var total = 0.0
 
                                     for (item in cartItems) {
                                         val p = productDetails[item.productId]!!
                                         val newStock = p.stock - item.quantity
                                         childUpdates["/products/${item.productId}/stock"] = newStock
-                                        productsForOrder.add(p.copy(stock = item.quantity))
                                         total += item.price * item.quantity
                                     }
 
                                     val order = Order(
                                         orderId = orderId,
                                         userId = uid,
-                                        products = productsForOrder,
+                                        products = cartItems,
                                         totalPrice = total,
                                         status = "Pending",
                                         paymentMethod = paymentMethod,

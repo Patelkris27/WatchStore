@@ -138,16 +138,15 @@ class ProductDetailsActivity : AppCompatActivity() {
 
         val orderId = db.child("orders").push().key!!
 
-        val product = Product(
-            id = productId,
-            name = productName,
+        val cartItem = CartItem(
+            productId = productId,
+            quantity = selectedQty.toLong(),
             price = price,
-            imageUrl = productImageUrl,
-            stock = selectedQty.toLong()
+            imageUrl = productImageUrl
         )
 
-        val cartList = ArrayList<Product>()
-        cartList.add(product)
+        val cartList = ArrayList<CartItem>()
+        cartList.add(cartItem)
 
         val totalPrice = price * selectedQty
 
