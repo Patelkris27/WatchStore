@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.gms.google.services)
     id("kotlin-parcelize")
+    alias(libs.plugins.jetbrains.kotlin.android)
 }
 
 android {
@@ -34,6 +35,12 @@ android {
     buildFeatures {
         viewBinding = true
     }
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_1_8)
+        }
+    }
+
 }
 
 dependencies {
