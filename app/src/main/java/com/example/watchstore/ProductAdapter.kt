@@ -25,6 +25,7 @@ class ProductAdapter(
         val tvMeta: TextView = v.findViewById(R.id.tvMeta)
         val tvPrice: TextView = v.findViewById(R.id.tvPrice)
         val tvLowStock: TextView = v.findViewById(R.id.tvLowStock)
+        val tvStockLeft: TextView = v.findViewById(R.id.tvStockLeft)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,6 +43,7 @@ class ProductAdapter(
         val brandName = brandsMap[p.brandId] ?: "Unknown Brand"
         val categoryName = categoriesMap[p.categoryId] ?: "Unknown Category"
         holder.tvMeta.text = "$brandName\n$categoryName"
+        holder.tvStockLeft.text = "${holder.itemView.context.getString(R.string.stock_left)} ${p.stock}"
 
 
         Glide.with(holder.itemView.context).load(p.imageUrl).into(holder.img)

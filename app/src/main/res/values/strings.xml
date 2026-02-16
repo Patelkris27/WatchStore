@@ -68,6 +68,7 @@
     <string name="export_orders_report_button">Export Orders Report</string>
     <string name="orders_report_exported">Orders report exported</string>
     <string name="search">Search</string>
+    <string name="stock_left">Stock left =</string>
 
     <string-array name="order_status_array">
         <item>Pending</item>
