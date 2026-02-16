@@ -39,6 +39,7 @@ class WatchlistFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         binding.rvWatchlist.layoutManager = GridLayoutManager(requireContext(), 2)
         adapter = UserProductAdapter(ArrayList())
         binding.rvWatchlist.adapter = adapter
@@ -47,7 +48,7 @@ class WatchlistFragment : Fragment() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                filter(s.toString())
+                filter(s?.toString() ?: "")
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -62,7 +63,6 @@ class WatchlistFragment : Fragment() {
     }
 
     private fun onLookupsLoaded() {
-        // This function is called after each lookup load, and proceeds only when all are complete.
         if (brandsLoaded && categoriesLoaded) {
             loadProducts()
         }
@@ -72,6 +72,9 @@ class WatchlistFragment : Fragment() {
         val brandsRef = FirebaseDatabase.getInstance().reference.child("brands")
         brandsRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (!isAdded || _binding == null) return
+
                 brandsMap.clear()
                 for (s in snapshot.children) {
                     val brandId = s.key ?: continue
@@ -82,12 +85,12 @@ class WatchlistFragment : Fragment() {
                     }
                     brandsMap[brandId] = brandName
                 }
+
                 brandsLoaded = true
                 onLookupsLoaded()
             }
 
             override fun onCancelled(error: DatabaseError) {
-                // In case of error, we still mark as loaded to not block the UI, but log the error.
                 brandsLoaded = true
                 onLookupsLoaded()
             }
@@ -98,6 +101,9 @@ class WatchlistFragment : Fragment() {
         val categoriesRef = FirebaseDatabase.getInstance().reference.child("categories")
         categoriesRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (!isAdded || _binding == null) return
+
                 categoriesMap.clear()
                 for (s in snapshot.children) {
                     val categoryId = s.key ?: continue
@@ -108,6 +114,7 @@ class WatchlistFragment : Fragment() {
                     }
                     categoriesMap[categoryId] = categoryName
                 }
+
                 categoriesLoaded = true
                 onLookupsLoaded()
             }
@@ -121,29 +128,34 @@ class WatchlistFragment : Fragment() {
 
     private fun loadProducts() {
         db = FirebaseDatabase.getInstance().reference.child("products")
+
         productsValueEventListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (!isAdded || _binding == null) return
+
                 productList.clear()
+
                 for (s in snapshot.children) {
                     val product = s.getValue(Product::class.java)
                     if (product != null) {
                         productList.add(product)
                     }
                 }
-                // Once products are loaded, perform an initial filter.
-                filter(binding.etSearch.text.toString())
+
+                filter(binding.etSearch.text?.toString() ?: "")
             }
 
             override fun onCancelled(error: DatabaseError) {}
         }
+
         db.addValueEventListener(productsValueEventListener)
     }
 
     private fun filter(text: String) {
-        // We only filter if the brand and category lookups are loaded.
-        if (!brandsLoaded || !categoriesLoaded) {
-            return
-        }
+
+        if (_binding == null) return
+        if (!brandsLoaded || !categoriesLoaded) return
 
         val filteredList = ArrayList<Product>()
         val searchText = text.lowercase(Locale.getDefault())
@@ -152,6 +164,7 @@ class WatchlistFragment : Fragment() {
             filteredList.addAll(productList)
         } else {
             for (item in productList) {
+
                 val brandName = brandsMap[item.brandId]?.lowercase(Locale.getDefault()) ?: ""
                 val categoryName = categoriesMap[item.categoryId]?.lowercase(Locale.getDefault()) ?: ""
 
@@ -171,9 +184,11 @@ class WatchlistFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
+
         if (this::db.isInitialized && this::productsValueEventListener.isInitialized) {
             db.removeEventListener(productsValueEventListener)
         }
+
         _binding = null
     }
 }
