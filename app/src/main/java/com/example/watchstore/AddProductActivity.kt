@@ -6,11 +6,7 @@ import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.watchstore.databinding.ActivityAddProductBinding
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 
 class AddProductActivity : AppCompatActivity() {
 
@@ -27,7 +23,12 @@ class AddProductActivity : AppCompatActivity() {
         db = FirebaseDatabase.getInstance().reference
 
         loadSpinners()
-        setupClickListeners()
+
+        binding.btnSaveProduct.setOnClickListener {
+            if (validateInput()) {
+                saveProduct()
+            }
+        }
     }
 
     private fun loadSpinners() {
@@ -43,66 +44,77 @@ class AddProductActivity : AppCompatActivity() {
         ref.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val list = ArrayList<String>()
+                map.clear()
+
                 for (s in snapshot.children) {
                     val name = s.value.toString()
-                    s.key?.let {
-                        map[name] = it
-                        list.add(name)
-                    }
+                    val id = s.key ?: continue
+
+                    map[name] = id
+                    list.add(name)
                 }
-                spinner.adapter =
-                    ArrayAdapter(this@AddProductActivity, android.R.layout.simple_spinner_dropdown_item, list)
+
+                spinner.adapter = ArrayAdapter(
+                    this@AddProductActivity,
+                    android.R.layout.simple_spinner_dropdown_item,
+                    list
+                )
             }
 
-            override fun onCancelled(error: DatabaseError) {
-                Toast.makeText(this@AddProductActivity, "Failed to load data", Toast.LENGTH_SHORT).show()
-            }
+            override fun onCancelled(error: DatabaseError) {}
         })
     }
 
-    private fun setupClickListeners() {
-        binding.btnSaveProduct.setOnClickListener {
-            if (validateInput()) {
-                saveProduct()
-            }
-        }
-    }
-
     private fun validateInput(): Boolean {
-        if (binding.etProductName.text.isEmpty() || binding.etPrice.text.isEmpty()
-            || binding.etImageUrl.text.isEmpty() || binding.etStock.text.isEmpty()
+        if (binding.etProductName.text.isEmpty() ||
+            binding.etPrice.text.isEmpty() ||
+            binding.etImageUrl.text.isEmpty() ||
+            binding.etStock.text.isEmpty()
         ) {
-            Toast.makeText(this, getString(R.string.fill_all_fields), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Fill all fields", Toast.LENGTH_SHORT).show()
             return false
         }
         return true
     }
 
     private fun saveProduct() {
+
         val name = binding.etProductName.text.toString()
         val price = binding.etPrice.text.toString().toDoubleOrNull() ?: 0.0
         val imageUrl = binding.etImageUrl.text.toString()
         val stock = binding.etStock.text.toString().toIntOrNull() ?: 0
+
         val selectedBrandName = binding.spBrand.selectedItem.toString()
         val selectedCategoryName = binding.spCategory.selectedItem.toString()
+
         val brandId = brandMap[selectedBrandName]
         val categoryId = categoryMap[selectedCategoryName]
 
         if (brandId == null || categoryId == null) {
-            Toast.makeText(this, "Please select a brand and category", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Select brand & category", Toast.LENGTH_SHORT).show()
             return
         }
 
         val productId = db.child("products").push().key ?: return
 
-        val product = Product(productId, name, price, imageUrl, brandId, categoryId, stock)
+        val product = Product(
+            id = productId,
+            name = name,
+            price = price,
+            imageUrl = imageUrl,
+            brandId = brandId,
+            categoryId = categoryId,
+            stock = stock
+        )
 
-        db.child("products").child(productId).setValue(product).addOnCompleteListener { task ->
-            if (task.isSuccessful) {
+        db.child("products").child(productId)
+            .setValue(product)
+            .addOnSuccessListener {
+                Toast.makeText(this, "Product Added", Toast.LENGTH_SHORT).show()
                 finish()
-            } else {
-                Toast.makeText(this, "Failed to save product", Toast.LENGTH_SHORT).show()
             }
-        }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to save", Toast.LENGTH_SHORT).show()
+            }
     }
 }

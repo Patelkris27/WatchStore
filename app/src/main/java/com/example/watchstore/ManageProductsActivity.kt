@@ -2,7 +2,6 @@ package com.example.watchstore
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.watchstore.databinding.ActivityManageProductsBinding
@@ -22,43 +21,66 @@ class ManageProductsActivity : AppCompatActivity() {
 
         db = FirebaseDatabase.getInstance().reference
 
-        setupRecyclerView()
-        setupClickListeners()
-        loadProducts()
-    }
-
-    private fun setupRecyclerView() {
         binding.rvProducts.layoutManager = LinearLayoutManager(this)
-    }
 
-    private fun setupClickListeners() {
         binding.btnAddProducts.setOnClickListener {
             startActivity(Intent(this, AddProductActivity::class.java))
         }
+
+        loadProducts()
     }
 
     private fun loadProducts() {
-        valueEventListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                productList.clear()
-                for (s in snapshot.children) {
-                    val product = s.getValue(Product::class.java)
-                    if (product != null) {
-                        productList.add(product)
-                    }
-                }
-                binding.rvProducts.adapter = ProductAdapter(productList, db, emptyMap(), emptyMap())
-                binding.rvProducts.adapter?.notifyDataSetChanged()
+
+        val categoryMap = mutableMapOf<String, String>()
+        val brandMap = mutableMapOf<String, String>()
+
+        db.child("categories").get().addOnSuccessListener { categorySnapshot ->
+
+            for (s in categorySnapshot.children) {
+                categoryMap[s.key!!] = s.value.toString()
             }
 
-            override fun onCancelled(error: DatabaseError) {}
-        }
+            db.child("brands").get().addOnSuccessListener { brandSnapshot ->
 
-        db.child("products").addValueEventListener(valueEventListener)
+                for (s in brandSnapshot.children) {
+                    brandMap[s.key!!] = s.value.toString()
+                }
+
+                valueEventListener = object : ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+
+                        productList.clear()
+
+                        for (s in snapshot.children) {
+                            try {
+                                val product = s.getValue(Product::class.java)
+                                if (product != null) {
+                                    productList.add(
+                                        product.copy(id = s.key ?: "")
+                                    )
+                                }
+                            } catch (e: Exception) {
+                                e.printStackTrace()
+                            }
+                        }
+
+                        binding.rvProducts.adapter =
+                            ProductAdapter(productList, db, brandMap, categoryMap)
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {}
+                }
+
+                db.child("products").addValueEventListener(valueEventListener)
+            }
+        }
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        db.child("products").removeEventListener(valueEventListener)
+        if (::valueEventListener.isInitialized) {
+            db.child("products").removeEventListener(valueEventListener)
+        }
     }
 }

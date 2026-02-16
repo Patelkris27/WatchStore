@@ -39,7 +39,10 @@ class ProductAdapter(
 
         holder.tvName.text = p.name
         holder.tvPrice.text = "₹${p.price}"
-        holder.tvMeta.text = "${brandsMap[p.brandId]}\n${categoriesMap[p.categoryId]}"
+        val brandName = brandsMap[p.brandId] ?: "Unknown Brand"
+        val categoryName = categoriesMap[p.categoryId] ?: "Unknown Category"
+        holder.tvMeta.text = "$brandName\n$categoryName"
+
 
         Glide.with(holder.itemView.context).load(p.imageUrl).into(holder.img)
 

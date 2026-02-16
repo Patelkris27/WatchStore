@@ -18,6 +18,7 @@ class ProfileFragment : Fragment() {
 
     private lateinit var auth: FirebaseAuth
     private lateinit var db: DatabaseReference
+    private var userListener: ValueEventListener? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,8 +35,6 @@ class ProfileFragment : Fragment() {
         auth = FirebaseAuth.getInstance()
         db = FirebaseDatabase.getInstance().reference.child("users")
 
-        loadUserProfile()
-
         binding.btnMyOrders.setOnClickListener {
             startActivity(Intent(requireActivity(), UserOrdersActivity::class.java))
         }
@@ -46,31 +45,52 @@ class ProfileFragment : Fragment() {
             intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         }
+
+        loadUserProfile()
     }
 
     private fun loadUserProfile() {
-        val user = auth.currentUser
-        if (user != null) {
-            binding.tvEmail.text = user.email
-            db.child(user.uid).addListenerForSingleValueEvent(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    val userProfile = snapshot.getValue(User::class.java)
-                    if (userProfile != null) {
-                        binding.tvUsername.text = userProfile.name
-                        // Load profile image if you have one in your User model
-                        // Glide.with(this@ProfileFragment).load(userProfile.profileImageUrl).into(binding.profileImage)
-                    }
-                }
 
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle error
+        val user = auth.currentUser ?: return
+
+        if (_binding == null) return
+
+        binding.tvEmail.text = user.email
+
+        userListener = object : ValueEventListener {
+
+            override fun onDataChange(snapshot: DataSnapshot) {
+
+                if (_binding == null) return   // 🔥 CRASH FIX
+
+                val userProfile = snapshot.getValue(User::class.java)
+
+                if (userProfile != null) {
+                    binding.tvUsername.text = userProfile.name
+
+                    // If you store profile image
+                    // if (!userProfile.profileImageUrl.isNullOrEmpty()) {
+                    //     Glide.with(requireContext())
+                    //         .load(userProfile.profileImageUrl)
+                    //         .into(binding.profileImage)
+                    // }
                 }
-            })
+            }
+
+            override fun onCancelled(error: DatabaseError) {}
         }
+
+        db.child(user.uid).addListenerForSingleValueEvent(userListener!!)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+
+        val user = auth.currentUser
+        if (userListener != null && user != null) {
+            db.child(user.uid).removeEventListener(userListener!!)
+        }
+
         _binding = null
     }
 }

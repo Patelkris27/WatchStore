@@ -1,10 +1,9 @@
 package com.example.watchstore
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.watchstore.databinding.ItemOrderBinding
 import com.google.firebase.database.FirebaseDatabase
@@ -34,21 +33,33 @@ class OrderAdapter(private val orders: List<Order>) : RecyclerView.Adapter<Order
             }
 
             val statuses = itemView.context.resources.getStringArray(R.array.order_status_array)
-            val adapter = ArrayAdapter(itemView.context, android.R.layout.simple_spinner_item, statuses)
-            binding.spinnerStatus.adapter = adapter
-            binding.spinnerStatus.setSelection(statuses.indexOf(order.status))
+            val adapter = ArrayAdapter(itemView.context, android.R.layout.simple_dropdown_item_1line, statuses)
+            binding.actStatus.setAdapter(adapter)
+            binding.actStatus.setText(order.status, false)
 
-            binding.spinnerStatus.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-                override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                    val newStatus = statuses[position]
-                    if (newStatus != order.status) {
-                        FirebaseDatabase.getInstance().reference.child("orders").child(order.orderId).child("status").setValue(newStatus)
-                    }
-                }
-
-                override fun onNothingSelected(parent: AdapterView<*>?) {
-                }
+            binding.actStatus.setOnItemClickListener { _, _, position, _ ->
+                val selectedStatus = statuses[position]
+                FirebaseDatabase.getInstance().reference.child("orders").child(order.orderId).child("status").setValue(selectedStatus)
+                setStatusColor(this, selectedStatus)
             }
+            setStatusColor(this, order.status)
+        }
+    }
+
+    private fun setStatusColor(holder: OrderViewHolder, status: String) {
+        when (status) {
+            "Pending" -> holder.itemView.findViewById<android.widget.TextView>(R.id.tvStatus).setTextColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.holo_orange_dark)
+            )
+            "Processing" -> holder.itemView.findViewById<android.widget.TextView>(R.id.tvStatus).setTextColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.holo_blue_dark)
+            )
+            "Shipped" -> holder.itemView.findViewById<android.widget.TextView>(R.id.tvStatus).setTextColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.holo_purple)
+            )
+            "Delivered" -> holder.itemView.findViewById<android.widget.TextView>(R.id.tvStatus).setTextColor(
+                ContextCompat.getColor(holder.itemView.context, android.R.color.holo_green_dark)
+            )
         }
     }
 }
