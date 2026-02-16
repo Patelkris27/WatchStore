@@ -123,18 +123,5 @@
             android:layout_marginRight="16dp"
             android:backgroundTint="@color/theme"/>
 
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnBuyNow"
-            android:layout_width="match_parent"
-            android:layout_height="52dp"
-            android:text="Buy Now"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:textColor="@color/white"
-            android:backgroundTint="@color/theme"/>
-
     </LinearLayout>
 </ScrollView>

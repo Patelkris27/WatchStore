@@ -35,7 +35,6 @@ class ProductDetailsActivity : AppCompatActivity() {
         val tvBrand = findViewById<TextView>(R.id.tvBrand)
         val tvCategory = findViewById<TextView>(R.id.tvCategory)
         val tvStock = findViewById<TextView>(R.id.tvStock)
-        val btnBuy = findViewById<Button>(R.id.btnBuyNow)
 
         val productId = intent.getStringExtra("id") ?: return
         val db = FirebaseDatabase.getInstance().reference
@@ -83,16 +82,12 @@ class ProductDetailsActivity : AppCompatActivity() {
             loadName("brands", s.child("brandId").value.toString(), tvBrand)
             loadName("categories", s.child("categoryId").value.toString(), tvCategory)
 
-            btnBuy.isEnabled = stock > 0
         }
         val btnCart = findViewById<Button>(R.id.btnAddToCart)
 
         btnCart.setOnClickListener {
             addToCart(productId)
-        }
 
-        btnBuy.setOnClickListener {
-            confirmOrder(productId)
         }
     }
     private fun addToCart(productId: String) {
