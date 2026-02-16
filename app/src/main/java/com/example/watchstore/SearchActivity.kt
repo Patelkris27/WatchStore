@@ -23,7 +23,7 @@ class SearchActivity : AppCompatActivity() {
         etSearch = findViewById(R.id.etSearch)
         rvSearchResults = findViewById(R.id.rvSearchResults)
 
-        adapter = UserProductAdapter(this, productList)
+        adapter = UserProductAdapter(productList)
         rvSearchResults.layoutManager = GridLayoutManager(this, 2)
         rvSearchResults.adapter = adapter
 

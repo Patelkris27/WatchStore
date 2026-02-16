@@ -1,6 +1,5 @@
 package com.example.watchstore
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -51,12 +50,19 @@ class HomeFragment : Fragment() {
         setupRecyclerViews()
         loadFilters()
         loadProducts()
+
+        binding.ivSearch.setOnClickListener {
+            parentFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, WatchlistFragment())
+                .addToBackStack(null)
+                .commit()
+        }
     }
 
     private fun setupBanner() {
         val bannerAdapter = BannerAdapter(bannerImages)
         binding.viewPagerBanner.adapter = bannerAdapter
-        binding.indicator.setViewPager(binding.viewPagerBanner)
+
         createSlideShow()
     }
 
