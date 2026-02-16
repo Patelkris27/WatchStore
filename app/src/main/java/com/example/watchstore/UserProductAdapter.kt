@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 
 class UserProductAdapter(
-    private val list: List<Product>
+    private var list: List<Product>
 ) : RecyclerView.Adapter<UserProductAdapter.VH>() {
 
     class VH(v: View) : RecyclerView.ViewHolder(v) {
@@ -52,4 +52,9 @@ class UserProductAdapter(
     }
 
     override fun getItemCount(): Int = list.size
+
+    fun filterList(filteredList: List<Product>) {
+        list = filteredList
+        notifyDataSetChanged()
+    }
 }

@@ -1,31 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <RelativeLayout
-        android:id="@+id/tvTitle"
-        android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@android:color/white">
+
+    <TextView
+        android:id="@+id/Title"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="sans-serif-condensed-medium"
+        android:text="Watches"
         android:layout_marginTop="50dp"
-        android:padding="10dp">
+        android:textColor="@color/theme"
+        android:textSize="30sp"
+        android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/Title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:fontFamily="sans-serif-condensed-medium"
-            android:text="Watches"
-            android:textColor="@color/theme"
-            android:textSize="30sp"
-            android:textStyle="bold" />
+    <EditText
+        android:id="@+id/etSearch"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/Title"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="10dp"
+        android:background="@drawable/search_bar_background"
+        android:drawableStart="@android:drawable/ic_menu_search"
+        android:drawablePadding="15dp"
+        android:hint="Search in watchlist..."
+        android:imeOptions="actionSearch"
+        android:maxLines="1"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:textColor="@color/theme"/>
 
-    </RelativeLayout>
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvWatchlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@+id/tvTitle"
-        android:padding="8dp"/>
+        android:layout_below="@id/etSearch"
+        android:padding="12dp"/>
 
 </RelativeLayout>
