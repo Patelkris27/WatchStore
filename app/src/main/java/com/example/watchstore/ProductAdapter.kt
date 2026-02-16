@@ -13,11 +13,12 @@ import com.example.watchstore.utils.DialogUtil
 import com.google.firebase.database.DatabaseReference
 
 class ProductAdapter(
-    private val list: List<Product>,
     private val rootDb: DatabaseReference,
     private val brandsMap: Map<String, String>,
     private val categoriesMap: Map<String, String>
 ) : RecyclerView.Adapter<ProductAdapter.ViewHolder>() {
+
+    private val list = mutableListOf<Product>()
 
     class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         val img: ImageView = v.findViewById(R.id.imgProduct)
@@ -35,6 +36,12 @@ class ProductAdapter(
         )
     }
 
+    fun setData(newList: List<Product>) {
+        list.clear()
+        list.addAll(newList)
+        notifyDataSetChanged()
+    }
+
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val p = list[position]
 
@@ -43,13 +50,13 @@ class ProductAdapter(
         val brandName = brandsMap[p.brandId] ?: "Unknown Brand"
         val categoryName = categoriesMap[p.categoryId] ?: "Unknown Category"
         holder.tvMeta.text = "$brandName\n$categoryName"
-        holder.tvStockLeft.text = "${holder.itemView.context.getString(R.string.stock_left)} ${p.stock}"
+        holder.tvStockLeft.text = "Stock Left: ${p.stock}"
 
 
         Glide.with(holder.itemView.context).load(p.imageUrl).into(holder.img)
 
         holder.tvLowStock.visibility =
-            if (p.stock <= 5) View.VISIBLE else View.GONE
+            if (p.stock <= 5L) View.VISIBLE else View.GONE
 
         holder.itemView.setOnLongClickListener {
             val popup = PopupMenu(holder.itemView.context, it)
@@ -153,7 +160,7 @@ class ProductAdapter(
                         "imageUrl" to etImage.text.toString(),
                         "brandId" to selectedBrandId,
                         "categoryId" to selectedCategoryId,
-                        "stock" to etStock.text.toString().toInt()
+                        "stock" to etStock.text.toString().toLong()
                     )
                 )
             }

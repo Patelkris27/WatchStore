@@ -37,8 +37,8 @@ class UserProductAdapter(
             .into(holder.img)
 
         holder.tvStock.text = when {
-            p.stock == 0 -> "Out of Stock"
-            p.stock <= 5 -> "Low Stock"
+            p.stock == 0L -> "Out of Stock"
+            p.stock <= 5L -> "Low Stock"
             else -> ""
         }
         holder.itemView.setOnClickListener {

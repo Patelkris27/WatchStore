@@ -11,7 +11,7 @@ class ManageProductsActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityManageProductsBinding
     private lateinit var db: DatabaseReference
-    private val productList = ArrayList<Product>()
+    private lateinit var adapter: ProductAdapter
     private lateinit var valueEventListener: ValueEventListener
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,16 +47,19 @@ class ManageProductsActivity : AppCompatActivity() {
                     brandMap[s.key!!] = s.value.toString()
                 }
 
+                adapter = ProductAdapter(db, brandMap, categoryMap)
+                binding.rvProducts.adapter = adapter
+
                 valueEventListener = object : ValueEventListener {
                     override fun onDataChange(snapshot: DataSnapshot) {
 
-                        productList.clear()
+                        val newProductList = ArrayList<Product>()
 
                         for (s in snapshot.children) {
                             try {
                                 val product = s.getValue(Product::class.java)
                                 if (product != null) {
-                                    productList.add(
+                                    newProductList.add(
                                         product.copy(id = s.key ?: "")
                                     )
                                 }
@@ -65,8 +68,7 @@ class ManageProductsActivity : AppCompatActivity() {
                             }
                         }
 
-                        binding.rvProducts.adapter =
-                            ProductAdapter(productList, db, brandMap, categoryMap)
+                        adapter.setData(newProductList)
                     }
 
                     override fun onCancelled(error: DatabaseError) {}

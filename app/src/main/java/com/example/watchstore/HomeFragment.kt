@@ -142,7 +142,7 @@ class HomeFragment : Fragment() {
                         imageUrl = s.child("imageUrl").value.toString(),
                         brandId = s.child("brandId").value.toString(),
                         categoryId = s.child("categoryId").value.toString(),
-                        stock = s.child("stock").getValue(Int::class.java) ?: 0
+                        stock = s.child("stock").getValue(Long::class.java) ?: 0L
                     )
                     productList.add(product)
                 }

@@ -12,12 +12,10 @@ import androidx.appcompat.app.AppCompatActivity
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import java.text.SimpleDateFormat
-import java.util.*
 
 class ProductDetailsActivity : AppCompatActivity() {
 
-    private var stock = 0
+    private var stock = 0L
     private var price = 0.0
     private var selectedQty = 1
     private var productName = ""
@@ -64,14 +62,14 @@ class ProductDetailsActivity : AppCompatActivity() {
             productName = s.child("name").value.toString()
             tvName.text = productName
             price = s.child("price").getValue(Double::class.java) ?: 0.0
-            stock = s.child("stock").getValue(Int::class.java) ?: 0
+            stock = s.child("stock").getValue(Long::class.java) ?: 0L
             productImageUrl = s.child("imageUrl").value.toString()
 
             tvPrice.text = "₹$price"
 
             tvStock.text = when {
-                stock == 0 -> "Out of Stock"
-                stock <= 5 -> "Low Stock"
+                stock == 0L -> "Out of Stock"
+                stock <= 5L -> "Low Stock"
                 else -> "In Stock"
             }
 
@@ -87,11 +85,10 @@ class ProductDetailsActivity : AppCompatActivity() {
 
         btnCart.setOnClickListener {
             addToCart(productId)
-
         }
     }
-    private fun addToCart(productId: String) {
 
+    private fun addToCart(productId: String) {
         val uid = FirebaseAuth.getInstance().currentUser?.uid ?: return
         val db = FirebaseDatabase.getInstance().reference
 
@@ -102,17 +99,19 @@ class ProductDetailsActivity : AppCompatActivity() {
 
         val cartRef = db.child("carts").child(uid).child(productId)
 
-        cartRef.get().addOnSuccessListener { s ->
-            val currentQty = s.child("quantity").getValue(Int::class.java) ?: 0
+        cartRef.get().addOnSuccessListener { snapshot ->
+            val currentQty = snapshot.child("quantity").getValue(Long::class.java) ?: 0L
+            val newQty = currentQty + selectedQty
 
-            cartRef.setValue(
-                mapOf(
-                    "quantity" to currentQty + selectedQty,
-                    "price" to price
-                )
+            val cartItem = CartItem(
+                productId = productId,
+                quantity = newQty,
+                imageUrl = productImageUrl,
+                price = price
             )
-
-            Toast.makeText(this, "Added to cart", Toast.LENGTH_SHORT).show()
+            cartRef.setValue(cartItem).addOnSuccessListener {
+                Toast.makeText(this, "Added to cart", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -144,9 +143,9 @@ class ProductDetailsActivity : AppCompatActivity() {
             name = productName,
             price = price,
             imageUrl = productImageUrl,
-            stock = selectedQty
+            stock = selectedQty.toLong()
         )
-        
+
         val cartList = ArrayList<Product>()
         cartList.add(product)
 

@@ -39,18 +39,19 @@ class CartFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
 
                 list.clear()
-                var total = 0
+                var total = 0.0
 
                 for (s in snapshot.children) {
-                    val qty = s.child("quantity").getValue(Int::class.java) ?: 0
-                    val price = s.child("price").getValue(Int::class.java) ?: 0
+                    val qty = s.child("quantity").getValue(Long::class.java) ?: 0L
+                    val price = s.child("price").getValue(Double::class.java) ?: 0.0
                     total += qty * price
 
                     list.add(
                         CartItem(
                             productId = s.key!!,
                             quantity = qty,
-                            price = price
+                            price = price,
+                            imageUrl = s.child("imageUrl").getValue(String::class.java) ?: ""
                         )
                     )
                 }

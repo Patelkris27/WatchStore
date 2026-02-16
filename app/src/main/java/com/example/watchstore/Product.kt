@@ -11,5 +11,5 @@ data class Product(
     val imageUrl: String = "",
     val brandId: String = "",
     val categoryId: String = "",
-    val stock: Int = 0
+    val stock: Long = 0
 ) : Parcelable
