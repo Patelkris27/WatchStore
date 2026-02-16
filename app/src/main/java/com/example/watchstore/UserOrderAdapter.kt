@@ -12,6 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.watchstore.OrderDetailsActivity
 import com.example.watchstore.utils.DialogUtil
 import com.google.firebase.database.FirebaseDatabase
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
 class UserOrderAdapter(
     private val list: List<Order>
@@ -36,6 +39,7 @@ class UserOrderAdapter(
     override fun onBindViewHolder(holder: VH, position: Int) {
         val o = list[position]
 
+        holder.tvDate.text = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(Date(o.orderDate))
         holder.tvStatus.text = o.status
 
         holder.tvStatus.setTextColor(
