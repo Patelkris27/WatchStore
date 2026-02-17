@@ -62,7 +62,9 @@ class AddProductActivity : AppCompatActivity() {
             stock = stock.toLong(),
             imageUrl = imageUrl,
             brandId = brandId,
-            categoryId = categoryId
+            categoryId = categoryId,
+            productId = id,
+            image = imageUrl
         )
 
         db.child("products").child(id).setValue(product).addOnCompleteListener {

@@ -59,9 +59,7 @@ class ManageProductsActivity : AppCompatActivity() {
                             try {
                                 val product = s.getValue(Product::class.java)
                                 if (product != null) {
-                                    newProductList.add(
-                                        product.copy(id = s.key ?: "")
-                                    )
+                                    newProductList.add(product)
                                 }
                             } catch (e: Exception) {
                                 e.printStackTrace()

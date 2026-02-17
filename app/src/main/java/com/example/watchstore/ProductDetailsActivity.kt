@@ -105,6 +105,7 @@ class ProductDetailsActivity : AppCompatActivity() {
 
             val cartItem = CartItem(
                 productId = productId,
+                name = productName,
                 quantity = newQty,
                 imageUrl = productImageUrl,
                 price = price
@@ -140,6 +141,7 @@ class ProductDetailsActivity : AppCompatActivity() {
 
         val cartItem = CartItem(
             productId = productId,
+            name = productName,
             quantity = selectedQty.toLong(),
             price = price,
             imageUrl = productImageUrl

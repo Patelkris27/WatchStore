@@ -13,7 +13,7 @@ class OrderProductAdapter(
 ) : RecyclerView.Adapter<OrderProductAdapter.VH>() {
 
     class VH(v: View) : RecyclerView.ViewHolder(v) {
-        val ivProduct: ImageView = v.findViewById(R.id.ivProduct)
+        val ivProduct: ImageView = v.findViewById(R.id.ivProductImage)
         val tvProductName: TextView = v.findViewById(R.id.tvProductName)
         val tvProductPrice: TextView = v.findViewById(R.id.tvProductPrice)
     }

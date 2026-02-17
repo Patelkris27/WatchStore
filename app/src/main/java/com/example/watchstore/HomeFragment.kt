@@ -135,15 +135,7 @@ class HomeFragment : Fragment() {
             override fun onDataChange(snapshot: DataSnapshot) {
                 productList.clear()
                 for (s in snapshot.children) {
-                    val product = Product(
-                        id = s.key ?: "",
-                        name = s.child("name").value.toString(),
-                        price = s.child("price").getValue(Double::class.java) ?: 0.0,
-                        imageUrl = s.child("imageUrl").value.toString(),
-                        brandId = s.child("brandId").value.toString(),
-                        categoryId = s.child("categoryId").value.toString(),
-                        stock = s.child("stock").getValue(Long::class.java) ?: 0L
-                    )
+                    val product = s.getValue(Product::class.java)!!
                     productList.add(product)
                 }
                 applyFilter()

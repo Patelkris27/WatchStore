@@ -154,13 +154,13 @@ class ProductAdapter(
                 }
 
                 rootDb.child("products").child(p.id).setValue(
-                    mapOf(
-                        "name" to etName.text.toString(),
-                        "price" to etPrice.text.toString().toDouble(),
-                        "imageUrl" to etImage.text.toString(),
-                        "brandId" to selectedBrandId,
-                        "categoryId" to selectedCategoryId,
-                        "stock" to etStock.text.toString().toLong()
+                    p.copy(
+                        name = etName.text.toString(),
+                        price = etPrice.text.toString().toDouble(),
+                        imageUrl = etImage.text.toString(),
+                        brandId = selectedBrandId,
+                        categoryId = selectedCategoryId,
+                        stock = etStock.text.toString().toLong()
                     )
                 )
             }

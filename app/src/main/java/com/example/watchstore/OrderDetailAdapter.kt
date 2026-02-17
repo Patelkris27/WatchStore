@@ -30,7 +30,7 @@ class OrderDetailAdapter(
         val p = list[position]
 
         holder.tvProductName.text = p.name
-        holder.tvProductQty.text = "Qty: ${p.stock}"
+        holder.tvProductQty.text = "Qty: ${p.quantity}"
         holder.tvProductPrice.text = "Price: ${p.price}"
 
         Glide.with(holder.itemView.context)

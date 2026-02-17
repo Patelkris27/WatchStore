@@ -1,4 +1,3 @@
-
 package com.example.watchstore
 
 import android.content.Intent
@@ -10,12 +9,10 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.example.watchstore.OrderDetailsActivity
 import com.example.watchstore.utils.DialogUtil
 import com.google.firebase.database.FirebaseDatabase
 import java.text.SimpleDateFormat
-import java.util.Date
-import java.util.Locale
+import java.util.*
 
 class UserOrderAdapter(
     private val list: List<Order>
@@ -69,13 +66,11 @@ class UserOrderAdapter(
 
         holder.llOrder.setOnClickListener {
             val intent = Intent(holder.itemView.context, OrderDetailsActivity::class.java)
-            for (product in o.products) {
-                // No need to do anything here, just iterating
-            }
+            intent.putExtra("orderId", o.orderId)
+            intent.putParcelableArrayListExtra("products", ArrayList(o.products))
             holder.itemView.context.startActivity(intent)
         }
     }
-
 
     override fun getItemCount(): Int = list.size
 }
