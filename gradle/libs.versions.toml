@@ -20,6 +20,7 @@ mpandroidchart = "v3.1.0"
 circleindicator = "2.1.6"
 firebaseBom = "34.9.0"
 circleimageview = "3.1.0"
+recyclerview = "1.4.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -39,6 +40,7 @@ mpandroidchart = { group = "com.github.PhilJay", name = "MPAndroidChart", versio
 circleindicator = { group = "me.relex", name = "circleindicator", version.ref = "circleindicator" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
 circleimageview = { group = "de.hdodenhof", name = "circleimageview", version.ref = "circleimageview" }
+androidx-recyclerview = { group = "androidx.recyclerview", name = "recyclerview", version.ref = "recyclerview" }
 
 
 [plugins]

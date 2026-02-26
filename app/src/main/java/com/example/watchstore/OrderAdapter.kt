@@ -1,5 +1,6 @@
 package com.example.watchstore
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
@@ -23,6 +24,18 @@ class OrderAdapter(private val orders: List<Order>) : RecyclerView.Adapter<Order
     override fun getItemCount(): Int = orders.size
 
     inner class OrderViewHolder(private val binding: ItemOrderBinding) : RecyclerView.ViewHolder(binding.root) {
+        init {
+            itemView.setOnClickListener {
+                val position = adapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val order = orders[position]
+                    val intent = Intent(itemView.context, AdminOrderDetailsActivity::class.java)
+                    intent.putExtra("orderId", order.orderId)
+                    itemView.context.startActivity(intent)
+                }
+            }
+        }
+
         fun bind(order: Order) {
             binding.tvOrderId.text = "Order ID: ${order.orderId}"
             binding.tvTotal.text = "Total: Rs${order.totalPrice}"
